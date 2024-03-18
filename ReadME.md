@@ -26,7 +26,7 @@ python /Main.py
 
 The pipeline of this code is shown as the below
 
-![Flow Chart_ADAPT](./images/flow chart_ADAPT.png)
+![Flow Chart_ADAPT](../images/flow chart_ADAPT.png)
 
 
 
