@@ -21,7 +21,7 @@ We use the ADAPT dataset to train the model. The ADAPT dataset is a thoroughly c
 The code for the training model is shown below:
 
 ```
-python /Main.py 
+PythonCode /Main.py 
 ```
 
 The pipeline of this code is shown as the below
@@ -32,9 +32,9 @@ The pipeline of this code is shown as the below
 
 - ##### To externally validate the model
 
-  ```
-  python /External_validate_model.py
-  ```
+```
+PythonCode /External_validate_model.py
+```
 
 ![flow chart_external data](/images/flow chart_external data.png)
 
@@ -43,13 +43,13 @@ The pipeline of this code is shown as the below
 For model training, the columns of input signals are 3-axis acceleration, 3-axis gyroscope, 3-axis magnitude data, and activity labels.
 
 ```
-python /Recognize_gait_unsupervised.py
+PythonCode /Recognize_gait_unsupervised.py
 ```
 
 - ##### To augment the dataset
 
 ```
-python /data_augmentation_general.py
+PythonCode /data_augmentation_general.py
 ```
 
 the hyperparameters of data augmentation are show as below: --> table
