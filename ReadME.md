@@ -26,7 +26,7 @@ python /Main.py
 
 The pipeline of this code is shown as the below
 
-![flow chart_ADAPT](/Users/yugezi/Desktop/1.1_ProjectVIBE_MP/3_ADAPT/2_Draft/Figures/Flow chart/flow chart_ADAPT.png)
+![flow chart_ADAPT](/images/flow chart_ADAPT.png)
 
 
 
@@ -36,7 +36,7 @@ The pipeline of this code is shown as the below
   python /External_validate_model.py
   ```
 
-![flow chart_external data](/Users/yugezi/Desktop/1.1_ProjectVIBE_MP/3_ADAPT/2_Draft/Figures/Flow chart/flow chart_external data.png)
+![flow chart_external data](/images/flow chart_external data.png)
 
 - ##### To predict unknown activities
 
@@ -81,7 +81,7 @@ Kernel_size = 3
 
 ### CNN Model structure
 
-![image-20240318212852516](/Users/yugezi/Library/Application Support/typora-user-images/image-20240318212852516.png)
+![Model Structure](/images/Model Structure.png)
 
 ### Results
 
@@ -89,13 +89,13 @@ DA is data augmentation.
 
 Below results are the average results after running 30 times for non DA version and 10 times for DA version.
 
-![image-20240318214133800](/Users/yugezi/Library/Application Support/typora-user-images/image-20240318214133800.png)
+![Model performance_external dataset](/images/Model performance_external dataset.png)
 
 
 
-![image-20240318214327438](/Users/yugezi/Library/Application Support/typora-user-images/image-20240318214327438.png)
+![Model performance_testing dataset](/images/Model performance_testing dataset.png)
 
-![image-20240318214333577](/Users/yugezi/Library/Application Support/typora-user-images/image-20240318214333577.png)
+![Model performance_validation dataset](/images/Model performance_validation dataset.png)
 
 
 
