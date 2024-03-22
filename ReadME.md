@@ -2,15 +2,28 @@ This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the
 
 # Recognize real-world gait episodes based on deep learning methods
 
-This script is written to recognize real-world gait episodes of healthy older adults, and stroke survivors based on inertial measurement units (IMU) data by using a convolutional neural network (CNN). The stroke survivors have a very slow gait. This repository contains the Python code for training and using the  CNN model as presented in **XXX (paper link).**
+We developed a convolutional neural network (CNN) to recognize real-world gait based on inertial measurement units (IMU) data and the CNN model worked perfectly on older adults (≥ 65 years old) and stroke patients who can walked without aids. Therefore, our developed CNN model are suitable for older people who walk slowly, as presented in paper **XXX (paper link).**
+
+## CNN Model structure
+![Model Structure](images/Model%20Structure.png)
+[SMB; you had spaces in your filenames. if you want that, you need to do %20 when calling the figure..]
+
+## CNN Model performance
 
 ## How to use the algorithm
-Depands on your aims, we have three versions you can use. The 1st and 2nd steps are same for these versions, and the differentiation starts in 3rd step.
+This repository contains the python code for 1) training a CNN model, 2) validating externally the model,3) predict the unknown activities. You can select the code according to your need.
+To make the model more robust, some functions are useful. 
+
+In conclusion, you can choose the functions you need according to the following table.
 |Aim |with true activity labels| functions | Use existing models|
 | ---|----------------------- | -----------| ----------|
 |Trian a model| Yes | main.py| No|
 |Validate externally| Yes | use.py| Yes|
 |predict unknown data| No | use2.py|Yes|
+
+
+The 1st and 2nd steps are same for these versions, and the differentiation starts in 3rd step.
+
 
  Run the Main.py file. The results of model performance will appear in the folder "CNN_models_results"[SMB: should we make the folder where results are stored an input variable?]. The initial weights of models and the number of windows for split datasets will be stored in the folder "CNN_models_info". The trained model in ".h5" will be saved in the "CNN_models_save" folder [SMB: but this is only if you train the model, right? Otherwise, it will not be?].
 
@@ -94,10 +107,6 @@ Kernel_size = 3
 
 
 
-### CNN Model structure
-
-![Model Structure](images/Model%20Structure.png)
-[SMB; you had spaces in your filenames. if you want that, you need to do %20 when calling the figure..]
 
 ### Results
 
