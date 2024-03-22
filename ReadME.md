@@ -11,8 +11,19 @@ We developed a convolutional neural network (CNN) to recognize real-world gait b
 ## CNN Model performance
 
 ## How to use the algorithm
-This repository contains the python code for 1) training a CNN model, 2) validating externally the model,3) predict the unknown activities. You can select the code according to your need.
-To make the model more robust, some functions are useful. 
+This repository contains the python code for aims:
+1) training a CNN model,
+  ```
+Model_training.py
+  ```
+2) validating externally the model
+```
+ External_validate_model.py
+ ```
+2) predict the unknown activities.
+You can select the code according to your need.
+
+In addition, the repository contains function code for training and data augmentation . 
 
 In conclusion, you can choose the functions you need according to the following table.
 |Aim |with true activity labels| functions | Use existing models|
