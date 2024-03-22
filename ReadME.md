@@ -5,10 +5,25 @@ This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the
 This script is written to recognize real-world gait episodes of healthy older adults, and stroke survivors based on inertial measurement units (IMU) data by using a convolutional neural network (CNN). The stroke survivors have a very slow gait. This repository contains the Python code for training and using the  CNN model as presented in **XXX (paper link).**
 
 ## How to use the algorithm
+Depands on your aims, we have three versions you can use. The 1st and 2nd steps are same for these versions, and the differentiation starts in 3rd step.
+|Aim |with true activity labels| functions | Use existing models|
+| ---|----------------------- | -----------| ----------|
+|Trian a model| Yes | main.py| No|
+|Validate externally| Yes | use.py| Yes|
+|predict unknown data| No | use2.py|Yes|
 
-Make sure all dependencies are correctly installed [SMB: which dependencies? Make sure to list them could also use something like poetry to automatic install them when the package is installed?]. python version > 3.6. Place the data from the IMU files (low back) in the data folder [SMB: I see in the code now that everything is pointing to something like "/yuge/etc etc etc". make sure that this is not the case by using relative or system paths]. Run the Main.py file. The results of model performance will appear in the folder "CNN_models_results"[SMB: should we make the folder where results are stored an input variable?]. The initial weights of models and the number of windows for split datasets will be stored in the folder "CNN_models_info". The trained model in ".h5" will be saved in the "CNN_models_save" folder [SMB: but this is only if you train the model, right? Otherwise, it will not be?].
+ Run the Main.py file. The results of model performance will appear in the folder "CNN_models_results"[SMB: should we make the folder where results are stored an input variable?]. The initial weights of models and the number of windows for split datasets will be stored in the folder "CNN_models_info". The trained model in ".h5" will be saved in the "CNN_models_save" folder [SMB: but this is only if you train the model, right? Otherwise, it will not be?].
 
-### Usage
+### 1) Install the necessary packages
+First step, make sure install all necessary packages in your python environment with python version > 3.6.
+
+### 2) Folders and data preparation
+Input forlder
+Output folder
+Secondly, place the data from the IMU files (low back) in the data folder
+ [SMB: I see in the code now that everything is pointing to something like "/yuge/etc etc etc". make sure that this is not the case by using relative or system paths].
+
+### 3）Usage
 
 The columns of input "DataX" are [3-axis acceleration, 3-axis gyroscope] or only [3-axis acceleration].[SMB; specify colums; does it matter which one is AP, ML, VT? or not?]
 
