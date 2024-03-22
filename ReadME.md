@@ -11,30 +11,36 @@ We developed a convolutional neural network (CNN) to recognize real-world gait b
 ## CNN Model performance
 
 ## How to use the algorithm
-This repository contains the python code for aims:
-1) training a CNN model,
-  ```
-Model_training.py
-  ```
-2) validating externally the model
+This repository contains the python code for below aims. 
+
+1) train a CNN model,
 ```
- External_validate_model.py
- ```
-2) predict the unknown activities.
+Model_training.py
+```
+2) validat externally the model
+```
+External_validate_model.py
+```
+3) predict the unknown activities.
+```
+Recognize_gait_unsupervised.py
+```
+
+In addition, the repository contains function code for training and data augmentation.
+```
+GaitRecognitionFunctions_general.py
+data_augmentation_general.py
+```
+
 You can select the code according to your need.
-
-In addition, the repository contains function code for training and data augmentation . 
-
-In conclusion, you can choose the functions you need according to the following table.
-|Aim |with true activity labels| functions | Use existing models|
+|Aim |with true activity labels| code | Use existing models|
 | ---|----------------------- | -----------| ----------|
-|Trian a model| Yes | main.py| No|
-|Validate externally| Yes | use.py| Yes|
-|predict unknown data| No | use2.py|Yes|
+|Trian a model| Yes | Model_training.py | No |
+|Validate externally| Yes | External_validate_model.py | Yes |
+|predict unknown data| No | Recognize_gait_unsupervised.py | Yes |
 
 
-The 1st and 2nd steps are same for these versions, and the differentiation starts in 3rd step.
-
+## Aim1: train a CNN model
 
  Run the Main.py file. The results of model performance will appear in the folder "CNN_models_results"[SMB: should we make the folder where results are stored an input variable?]. The initial weights of models and the number of windows for split datasets will be stored in the folder "CNN_models_info". The trained model in ".h5" will be saved in the "CNN_models_save" folder [SMB: but this is only if you train the model, right? Otherwise, it will not be?].
 
