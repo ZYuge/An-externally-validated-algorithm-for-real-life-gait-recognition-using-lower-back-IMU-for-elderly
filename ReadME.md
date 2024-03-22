@@ -4,11 +4,12 @@ This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the
 
 We developed a convolutional neural network (CNN) to recognize real-world gait based on inertial measurement units (IMU) data and the CNN model worked perfectly on older adults (≥ 65 years old) and stroke patients who can walked without aids. Therefore, our developed CNN model are suitable for older people who walk slowly, as presented in paper **XXX (paper link).**
 
-## CNN Model structure
 ![Model Structure](images/Model%20Structure.png)
-[SMB; you had spaces in your filenames. if you want that, you need to do %20 when calling the figure..]
+#### Figure1. CNN Model structure
 
-## CNN Model performance
+
+![Model performance_external dataset](/images/Model%20performance_external%20dataset.png)
+#### Figure2. CNN Model performance on stroke patients
 
 ## How to use the algorithm
 This repository contains the python code for aims:
