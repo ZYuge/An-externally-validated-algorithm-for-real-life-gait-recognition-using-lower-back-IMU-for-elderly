@@ -15,7 +15,7 @@ We developed a convolutional neural network (CNN) to recognize real-world gait o
 
 
 ## 2. How to use the algorithm
-This repository contains 3 main Python code for different aims. 
+For different aims, you can choose different main Python code. 
 
 **1) train a CNN model, see 2.1**
 ```
