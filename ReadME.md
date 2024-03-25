@@ -1,6 +1,6 @@
 This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the Norwegian University of Science and Technology, Utrecht University of Applied Sciences, and Vrije Universiteit Amsterdam.
 
-# Recognize real-world gait episodes based on deep learning methods
+# 1. Recognize real-world gait episodes based on deep learning methods
 
 We developed a convolutional neural network (CNN) to recognize real-world gait based on inertial measurement units (IMU) data and the CNN model worked perfectly on older adults (mean age 76.4(5.6) years) and stroke patients(mean age 72.4(12.7) year) who can walked without aids. Therefore, our developed CNN model are suitable for older people who walk slowly, as presented in paper **XXX (paper link).**
 
@@ -10,23 +10,23 @@ We developed a convolutional neural network (CNN) to recognize real-world gait b
 ![Model performance_external dataset](/images/Model%20performance_external%20dataset.png)
 **Figure2. CNN Model performance on external dataset (stroke patients)(Note:DA, the abbreviation for data augmentation, here we use rotation 90° on xyz-axis, separately）**
 
-## How to use the algorithm
-This repository contains 3 main python code for below aims. 
+## 2. How to use the algorithm
+This repository contains 3 main Python code for different aims. 
 
-1) train a CNN model,
+1) train a CNN model, **see 2.1**
 ```
 Model_training.py
 ```
-2) validat externally the model
+2) validate externally the existing model, **see 2.2**
 ```
 External_validate_model.py
 ```
-3) predict the unknown activities.
+3) predict the unknown activities, **see 2.3**
 ```
 Recognize_gait_unsupervised.py
 ```
 
-In addition, the repository contains subfunction code for training and data augmentation.
+In addition, the repository contains subfunction code for training process **(see 3.1)** and data augmentation **(see 3.2)**.
 ```
 GaitRecognitionFunctions_general.py
 data_augmentation_general.py
@@ -40,7 +40,7 @@ You can select the code according to your need.
 |predict unknown data| No | Recognize_gait_unsupervised.py | GaitRecognitionFunctions_general.py | Yes |
 
 
-## Aim1: train a CNN model
+## 2.1 Aim1: To train a CNN model
 
 There are two required code files and 1 option file for this aim. Put all these code into the same folder, for example ./github_rwk/", so that we can call subfuntions in the main functions.
 
@@ -83,21 +83,28 @@ import openpyxl
 import os
 ```
 
-### 2) Setting folders and data preparation
-At the beginning of the main code
+### 2) Setting folders
+At the beginning of the main code "Model_training.py", we set the location of the input data and output. For folder of input data, it should contain data files, eg. mat files. For the folders of output, just set the location and the code will **automatically generate** the folder.
+```
+# The folder of input
+InputDataDir = './github_rwk/InputData/'
 
-Output folder
+# The folders of output, set the location and it can be automatically generated later
+# a) store the model performance of testing and validating datasets
+ModelResultDir = "./github_rwk/CNN_models_results"
+# b) store the '.h5' model files 
+ModelsSaveDir = "./github_rwk/CNN_models_save"
+# c) will generate 3 subfolders, i.e., "InitialWeights", "loss plot" and "number of windows", storing the related paramters during the training
+ModelsInfoDir = "./github_rwk/CNN_models_info"
+```
+
+### 3) Data preparation
 Secondly, place the data from the IMU files (low back) in the data folder
- [SMB: I see in the code now that everything is pointing to something like "/yuge/etc etc etc". make sure that this is not the case by using relative or system paths].
-The results of model performance will appear in the folder "CNN_models_results"[SMB: should we make the folder where results are stored an input variable?]. The initial weights of models and the number of windows for split datasets will be stored in the folder "CNN_models_info". The trained model in ".h5" will be saved in the "CNN_models_save" folder [SMB: but this is only if you train the model, right? Otherwise, it will not be?].
-
-### 3）Usage
 
 The columns of input "DataX" are [3-axis acceleration, 3-axis gyroscope] or only [3-axis acceleration].[SMB; specify colums; does it matter which one is AP, ML, VT? or not?]
 
-For training and externally validating models, "DataY" and "groups" have the corresponding activity labels and subject numbers on each sampling point of DataX, respectively.
 
-- ##### To train the model
+- ### 4) Model training
 
 We used the ADAPT dataset to train the model. The ADAPT dataset is a IMU dataset collected on older adults by Bourke et al, which includes semi-structured supervised and free-living unsupervised situations both with manually annotated labels based on video data.  
 
@@ -112,8 +119,8 @@ The pipeline of this code is shown as the below
 ![Flow Chart_ADAPT](images/flow%20chart_ADAPT.png)
 
 
-
-- ##### To externally validate the model
+## 2.2 Aim2: To externally validate the existing model
+For training and externally validating models, "DataY" and "groups" have the corresponding activity labels and subject numbers on each sampling point of DataX, respectively.
 
 ```
 PythonCode /External_validate_model.py
@@ -121,15 +128,16 @@ PythonCode /External_validate_model.py
 
 ![flow chart_external data](images/flow%20chart_external%20data.png)
 
-- ##### To predict unknown activities
+## 2.3 Aim3: To predict unknown activities
 
 For model training [SMB: but this piece is about prediction, not trainnig?, the columns of input signals are 3-axis acceleration, 3-axis gyroscope, 3-axis magnitude data, and activity labels.
 
 ```
 PythonCode /Recognize_gait_unsupervised.py
 ```
-
-- ##### To augment the dataset
+## 3. Subfunctions
+### 3.1 Functions in "GaitRecognitionFunctions_general.py"
+### 3.2 To augment the dataset
 
 ```
 PythonCode /data_augmentation_general.py
