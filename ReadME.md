@@ -44,7 +44,7 @@ You can select the code according to your need.
 |predict unknown data| No | Recognize_gait_unsupervised.py | GaitRecognitionFunctions_general.py | Yes |
 
 
-## 2.1. Aim1: To train a CNN model
+## 2.1. Aim 1: To train a CNN model
 
 There are 1 main code and 2 subfunction code for this aim. Put all these code into the same folder, for example ./github_rwk/", so that we can call subfuntions in the main functions.
 
@@ -118,13 +118,12 @@ augmentation_methods = ['rotation']  # type the methods you will use, if no, typ
 
 
 ### 2.1.4 Data preparation
-**What you need to do is to prepare the IMU in a folder with "mat" files. 
+**What you need to do is to prepare the IMU data in a folder with "mat" files. The signals can be 6 axes [3-axis acceleration, 3-axis gyroscope] or only 3 axes [3-axis acceleration] (random directions), which you can set in 2.1.3 "input_axis".
 Each ".mat" file represents each subject and the signals are stored in variable "signal" of the mat file.**
 
 We load the data by using the function "load_matfiles" in the Python code "GaitRecognitionFunctions_general.py". After loading, we will get DataX, DataY, DataY_binary, and groups.
-**The columns of input "DataX" can be 6 axes [3-axis acceleration, 3-axis gyroscope] or only 3 axes [3-axis acceleration] (random directions).**
 
-In our paper, **the ADAPT dataset was used to train the model**, collected by Bourke et al, including semi-structured supervised and free-living unsupervised situations both with manually annotated labels based on video data. And X axis of the DataX responds to anteroposterior, Y:medial-lateral, Z: vertical. DataY includes all activity labels. DataY_binary includes walking and non-walking labels. Groups are the number of subjects, for further splitting datasets.
+In our paper, **the ADAPT dataset was used to train the model**, collected by Bourke et al, including semi-structured supervised and free-living unsupervised situations both with manually annotated labels based on video data. DataX has 6 axes, i.e., 3-axis acceleration, 3-axis gyroscope. And columns XYZ axes of acceleration and gyroscope respond to vertical (up, positive values), medial-lateral (right +), and anteroposterior (anter +), respectively. DataY includes all activity labels. DataY_binary includes walking and non-walking labels. Groups are the number of subjects, for further splitting datasets.
 
 The code loading data in the main, shown as below
 ```
@@ -194,15 +193,6 @@ save_dataframe(Scores_val, ModelResultDir, 'scores_val.xlsx')
 save_dataframe(Scores_test,ModelResultDir, 'scores_test.xlsx')
 ```
 
-
-
-We used the ADAPT dataset to train the model. The ADAPT dataset is a IMU dataset collected on older adults by Bourke et al, which includes semi-structured supervised and free-living unsupervised situations both with manually annotated labels based on video data.  
-
-The code for the training model is shown below:
-
-```
-PythonCode /Main.py [SMB: but you say that this is the code to run the model on your own data, but here you say that this iss the code used to train? Shouldnt there be two seperate main files?]
-```
 
 The pipeline of above process is shown as the below
 
