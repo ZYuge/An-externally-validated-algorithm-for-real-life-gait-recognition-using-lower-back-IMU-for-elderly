@@ -33,11 +33,11 @@ data_augmentation_general.py
 ```
 
 You can select the code according to your need.
-|Aim |with true activity labels| code | Use existing models|
-| ---|----------------------- | -----------| ----------|
-|Trian a model| Yes | Model_training.py <br> GaitRecognitionFunctions_general.py <br>data_augmentation_general.py| No |
-|Validate externally| Yes | External_validate_model.py | Yes |
-|predict unknown data| No | Recognize_gait_unsupervised.py | Yes |
+|Aim |Data with true activity labels| Main code | Subfunction | Use existing models|
+| ---|----------------------- | -----------| ----------|----------|
+|Trian a model| Yes | Model_training.py | GaitRecognitionFunctions_general.py <br>data_augmentation_general.py| No |
+|Validate externally| Yes | External_validate_model.py | GaitRecognitionFunctions_general.py <br>data_augmentation_general.py| Yes |
+|predict unknown data| No | Recognize_gait_unsupervised.py | GaitRecognitionFunctions_general.py | Yes |
 
 
 ## Aim1: train a CNN model
@@ -83,8 +83,9 @@ import openpyxl
 import os
 ```
 
-### 2) Folders and data preparation
-Input forlder
+### 2) Setting folders and data preparation
+At the beginning of the main code
+
 Output folder
 Secondly, place the data from the IMU files (low back) in the data folder
  [SMB: I see in the code now that everything is pointing to something like "/yuge/etc etc etc". make sure that this is not the case by using relative or system paths].
