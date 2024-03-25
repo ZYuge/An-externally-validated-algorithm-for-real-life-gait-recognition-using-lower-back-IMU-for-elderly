@@ -4,7 +4,7 @@ This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the
 
 # 1. Recognize real-world gait episodes based on deep learning methods
 
-We developed a convolutional neural network (CNN) to recognize real-world gait based on inertial measurement units (IMU) data and the CNN model worked perfectly on older adults (mean age 76.4(5.6) years) and stroke patients(mean age 72.4(12.7) year) who can walked without aids. Therefore, our developed CNN model are suitable for older people who walk slowly, as presented in paper **XXX (paper link).**
+We developed a convolutional neural network (CNN) to recognize real-world gait or not **(binary classification)** based on inertial measurement units (IMU) data from **lower back** and the CNN model worked perfectly on older adults (mean age 76.4(5.6) years) and stroke patients(mean age 72.4(12.7) year) who can walked without aids. Therefore, our developed CNN model are suitable for older people who walk slowly, as presented in paper **XXX (paper link).**
 
 ![Model Structure](images/Model%20Structure.png)
 **Figure1. CNN Model structure (The input IMU data can be 3-axis or 6-axis)**
@@ -102,12 +102,29 @@ ModelsSaveDir = "./github_rwk/CNN_models_save"
 ModelsInfoDir = "./github_rwk/CNN_models_info"
 ```
 
-### 2.1.3 Data preparation
-Secondly, place the data from the IMU files (low back) in the data folder
+### 2.1.3 Setting parameters
+There are some parameters that need to be set in advance.
+```
+repeats = 2        # repeat times of the model
+fs = 100           # sampling frequency of the IMU
+wk_label = 1       # the y-label of walking
+window_size = 200  # window size for model training, here is 2 seconds
+percentage = 0.5   # the overlapping of windows
+Nfolds = 5         # the number of fold splitting the training and test sets
+Nfolds_val = 3     # the number of fold splitting the training and validating sets
+input_axis = 6                      # 3-> only acc, 6-> acc&gyr
+augmentation_methods = ['rotation'] # type the methods you will use in here, if non, type "None" instead
+```
+
+
+### 2.1.4 Data preparation
+The input data can be 3-axis acceleration or can be 6-axis acceleration and gyroscope data. 
+
 
 The columns of input "DataX" are [3-axis acceleration, 3-axis gyroscope] or only [3-axis acceleration].[SMB; specify colums; does it matter which one is AP, ML, VT? or not?]
 
-### 2.1.4 Model training
+
+### 2.1.5 Model training
 
 We used the ADAPT dataset to train the model. The ADAPT dataset is a IMU dataset collected on older adults by Bourke et al, which includes semi-structured supervised and free-living unsupervised situations both with manually annotated labels based on video data.  
 
