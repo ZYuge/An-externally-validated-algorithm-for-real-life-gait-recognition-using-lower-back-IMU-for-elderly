@@ -123,7 +123,7 @@ input_axis = 6                       # 3-> only acc, 6-> acc&gyr
 augmentation_methods = ['rotation']  # type the methods you will use, if no, type "None" instead
 ```
 
-### 2.1.4. Data preparation
+### 2.1.4. Load data
 **What you need to do is to prepare the IMU data in a folder with "mat" files. The signals can be 6 axes [3-axis acceleration, 3-axis gyroscope] or only 3 axes [3-axis acceleration] (random directions), which you can set in 2.1.3 "input_axis".
 Each ".mat" file represents each subject and the signals are stored in variable "signal" of the mat file.**
 If the data is in .txt files, you can reference 2.2.4.
@@ -256,10 +256,10 @@ fs = XX            # sampling frequency of the sensor, can be different with the
 window_size = 200  # the same size with the model training
 percentage = 0.5   # the overlapping rate of windows
 input_axis = 6     # 3-> only acc, 6-> acc&gyr
-best_model = f'{model_folder}/best_CNNmodel_name.h5'
+model_folder = "./github_rwk/CNN_models_save" # models from training process 2.2.1, or the existing models you want to validate externally
 ```
 
-### 2.2.4. Data preparation
+### 2.2.4. Load and segment data 
 **We put all the IMU signals of walking and non-walking into separate ".txt" files under the input folder.** Also, the signals can be 6 axes [3-axis acceleration, 3-axis gyroscope] or only 3 axes [3-axis acceleration] (random directions). All subjects's signals are spliced vertically. The responding activity labels and subjects' number are spliced vertically and in different files.
 
 Anyway, there are 5 '.txt' files under the input folder. They are 
@@ -308,21 +308,21 @@ DataY_new = np.concatenate((DataY_clean, DataY_rot), axis=0)
 groups_new = np.concatenate((groups_clean, groups_rot), axis=0)
 ```
 
-### 2.2.5. Validating the existing Model
-There is nothing to modify for you.
-
 Before put the data into models, we segment data into windows
 ```
 X_win, y_win, groups_win = GR.segment_signal(DataX_new, DataY_new, groups_new, window_size, percentage)
 ```
 
-Then we use the model and plot the vertical accelerations with true and predicted y labels.
+### 2.2.5. Validating the existing Model
+There is nothing to modify for you. We use the existing models from the folder  and plot the vertical accelerations with true and predicted y labels.
+
 ```
-# load existing models
+# load existing models from the folders and predict y labels in a loop
 scores_all = []
-for filename in os.listdir(model_folder):
+model_folder = "./github_rwk/CNN_models_save"
+for filename in os.listdir(model_folder): 
     if filename.endswith('.h5'):
-        file_path = os.path.join(model_folder, filename)
+        file_path = os.path.join(model_path)
         numbers = re.search(r'(\d+)\.', filename)
         print(numbers.groups())
 
@@ -364,25 +364,142 @@ The pipeline of above process is shown as the below
 
 ![flow chart_external data](images/flow%20chart_external%20data.png)
 
-## 2.3. Aim3: To predict unknown activities
+## 2.3. Aim 3: To predict unknown activities
 
-For model training [SMB: but this piece is about prediction, not trainnig?, the columns of input signals are 3-axis acceleration, 3-axis gyroscope, 3-axis magnitude data, and activity labels.
+For the prediction, the columns of input signals can contain 3-axis acceleration, 3-axis gyroscope, 3-axis magnitude data, and activity labels.
 
+You can choose either 6 axes or only 3-axis acceleration to predict the activity labels.
+
+The main code we need to use is 
 ```
 PythonCode /Recognize_gait_unsupervised.py
 ```
 
+### 2.3.1. Import the necessary packages
+```
+import os
+import re
+import pickle
+import numpy as np
+import matplotlib.pyplot as plt
+import GaitRecognitionFunctions_general as GR
+from tensorflow.keras.models import load_model
+from keras.utils import plot_model
+```
+
+### 2.3.2. Setting folders
+Set the folders of input and ouput. Input data should be put into the input folder.
+
+```
+InputDataDir = "XXXX"
+PredictPNGDir = "./github_rwk_predict/png"
+PredictSVGDir = "./github_rwk_predict/svg"
+
+if not os.path.exists(PredictPNGDir):
+    os.makedirs(PredictPNGDir)
+if not os.path.exists(PredictSVGDir):
+    os.makedirs(PredictSVGDir)
+
+```
+
+### 2.3.3. Setting parameters
+```
+fs = XXX            # sampling frequency of the sensor
+window_size = 200   # the same value during training process
+percentage = 0.5    # the same value during training process
+input_axis = 6      # optional, 6 -> acceleration& gyroscope, 3 -> only acc
+```
+
+### 2.3.4. Load and segment data
+If data are in .txt files, to load the data, please reference 2.2.1. If data are in .mat files,please reference 2.1.1.
+The code of segmentation is the same,
+```
+X_win, groups_win = GR.segment_signal_unsupervised(DataX, groups, window_size, percentage)
+```
+
+### 2.3.5. Predict y label
+Here, we got the best CNN models from 6 axes and 3 axis separately in the gituhub folder. So we can directly load the model, predict the y labels and plot them with signals.
+
+```
+model_path = '/Best CNN models/CNNmodel_6axes.h5'
+OR
+model_path = '/Best CNN models/CNNmodel_3axes.h5'
+
+cnn_model = load_model(file_path)
+y_predict = cnn_model.predict(X_win).round()
+
+X_rm_repeat = X_win[:, :100, :]
+X = X_rm_repeat.reshape(-1, 3)
+y_predict_final = np.repeat(y_predict, 100, axis=0)
+groups_final = np.repeat(groups_win, 100, axis=0)
+time_seconds = np.arange(len(X)) / fs
+
+plt.figure(figsize=(19, 10))
+plt.plot(time_seconds, X[:, 0])
+plt.plot(time_seconds, y_predict_final[:, 1])
+plt.title('Predicted Vertical Acceleration')  #accX
+plt.legend(['Signal', 'Predicted Label (wk=1)'])
+plt.xlabel("Seconds", fontsize=20)
+plt.ylabel("Gravity Acceleration (9.8 m/s²)", fontsize=16)
+plt.tick_params(axis='x', labelsize=15, labelcolor='black', pad=10)
+plt.tick_params(axis='y', labelsize=15, labelcolor='black', pad=10)
+
+plt.savefig(f'{PredictPNGDir}/VTacc_pred_y.png') # AccX is vertical acc
+plt.savefig(f'{PredictSVGDir}/VTacc_pred_y.svg')
+```
 
 ## 3. Description of Subfunctions
 ### 3.1. Functions in "GaitRecognitionFunctions_general.py"
+Packages needed are 
+```
+import os
+import pandas as pd
+import scipy.io as spio
+import numpy as np
+import matplotlib.pyplot as plt
+from tensorflow import keras
+from keras.callbacks import EarlyStopping
+from keras.models import Sequential,load_model
+from keras.layers import Dense,Flatten,Dropout,Conv1D,MaxPooling1D
+from tensorflow.keras.utils import to_categorical
+from sklearn.utils import shuffle
+from sklearn.model_selection import GroupKFold, LeaveOneGroupOut
+from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
+import re
+import pickle
+```
+
+The functions contain following subfuntions, and you can call them by
+```
+import GaitRecognitionFunctions_general.py as GR
+GR.subfuntion_names
+```
+
+Subfuntions contain below
+```
+DataX, DataY, DataY_binary, groups, filenames, subject_number = load_matfiles(dataDir, aim_label, input_axis)
+y_dataDichotoom = dichotomy_labels(y_data, aim_label)
+X_final, y_final, groups_final = segment_signal(X, y, groups, window_size, percentage)
+X_final, groups_final = segment_signal_unsupervised(X, groups, window_size, percentage)
+DataX_blc, DataY_blc, DataGroups_blc = down_sampling_win(X, y, groups, i, output_path, data_type)
+X_train, X_test, y_train, y_test,groups_train,groups_test = split_GroupNfolds(X_data, y_data, Groups, Nfolds)
+X_train, X_val, y_train, y_val, groups_train, groups_val = split_LeaveOneOut(X_t_v, y_t_v, groups_t_v)
+plot_loss(history,i,output_path)
+model, early_stopping = cnn_model(x_t,y_t,i,output_path)
+model, history, score_val,score_test = fit_and_evaluate(x_t, x_val, y_t, y_val,x_test,y_test, i, output_path)
+score = odel_performance(y_true, y_pred)
+model, model_history, final_epoch, score_val, score_test = run_model(X_train, X_val, y_train, y_val, groups_train, groups_val, X_test, y_test, groups_test, window_size, percentage, i,output_path)
+```
+
 ### 3.2. To augment the dataset
+The functions "data_augmentation_general.py" contain following many methods, and you can call individual method according to your aim.
 
 ```
-PythonCode /data_augmentation_general.py
+import data_augmentation_general.py as DA
+DA.method_name() 
 ```
 
-the hyperparameters of data augmentation are show as below: --> table
-
+The methods and hyperparameters of them are show as below and you can modify them by your own: 
 | augmentation methods       | recommended scale |
 | -------------------------- | ----------------- |
 | Jitter                     | [0.01, 0.02]      |
@@ -391,13 +508,10 @@ the hyperparameters of data augmentation are show as below: --> table
 | Rotation                   | [90°]             |
 
 
-
-
-
 ## 4. References
 
 [1] Bourke AK, Ihlen EAF, Bergquist R, Wik PB, Vereijken B, Helbostad JL. A physical activity reference data-set recorded from older adults using body-worn inertial sensors and video technology—The ADAPT study data-set. Sensors. 2017;17(3):559.
-
+[2] Our ADAPT paper after publishing
 
 
 ## Help
