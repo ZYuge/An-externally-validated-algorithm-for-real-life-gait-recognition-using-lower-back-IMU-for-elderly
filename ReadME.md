@@ -61,7 +61,7 @@ data_augmentation_general.py        # optional
 ### 2.1.1 Install the necessary packages
 Before running the code, make sure install all necessary packages "numpy, pandas, openpyxl, os" in your python environment with python version > 3.6.
 
-To check which packages are installed in your Python environment, you can type the following command on the Python console or terminal:
+To **check** which packages are installed in your Python environment, you can type the following command on the Python console or terminal:
 ```
 pip list
 ```
@@ -70,14 +70,14 @@ If you're using Anaconda or Miniconda, you can use the conda list command:
 conda list
 ```
 
-If not, you can install these packages, by below code
+If not, you can **install** these packages, by below code
 ```
 pip install package_name
 or
 conda install package_name
 ```
 
-Finally, import necessary packages in the main code "Model_training.py"
+Finally, **import** necessary packages in the main code "Model_training.py"
 ```
 import GaitRecognitionFunctions_general as GR
 import data_augmentation_general as DA
@@ -118,7 +118,8 @@ augmentation_methods = ['rotation']  # type the methods you will use, if no, typ
 
 
 ### 2.1.4 Data preparation
-**What you need to do is to prepare the IMU in a folder with "mat" files. Each ".mat" file represents each subject and the signals are stored in variable "signal" of the mat file.**
+**What you need to do is to prepare the IMU in a folder with "mat" files. 
+Each ".mat" file represents each subject and the signals are stored in variable "signal" of the mat file.**
 
 We load the data by using the function "load_matfiles" in the Python code "GaitRecognitionFunctions_general.py". After loading, we will get DataX, DataY, DataY_binary, and groups.
 **The columns of input "DataX" can be 6 axes [3-axis acceleration, 3-axis gyroscope] or only 3 axes [3-axis acceleration] (random directions).**
