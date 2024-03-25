@@ -46,16 +46,16 @@ You can select the code according to your need.
 
 ## 2.1. Aim1: To train a CNN model
 
-There are two required code files and 1 option file for this aim. Put all these code into the same folder, for example ./github_rwk/", so that we can call subfuntions in the main functions.
+There are 1 main code and 2 subfunction code for this aim. Put all these code into the same folder, for example ./github_rwk/", so that we can call subfuntions in the main functions.
 
-2 required code (1 main, 1 subfunciton)
+The main code
 ```
 Model_training.py
-GaitRecognitionFunctions_general.py
 ```
-1 optional file (subfunction)
+The subfunciton code
 ```
-data_augmentation_general.py
+GaitRecognitionFunctions_general.py # required
+data_augmentation_general.py        # optional
 ```
 
 ### 2.1.1 Install the necessary packages
@@ -103,28 +103,97 @@ ModelsInfoDir = "./github_rwk/CNN_models_info"
 ```
 
 ### 2.1.3 Setting parameters
-There are some parameters that need to be set in advance.
+There are some parameters that need to be set in the main code. Below are the default values, you can modify them by your own.
 ```
-repeats = 2        # repeat times of the model
-fs = 100           # sampling frequency of the IMU
-wk_label = 1       # the y-label of walking
-window_size = 200  # window size for model training, here is 2 seconds
-percentage = 0.5   # the overlapping of windows
-Nfolds = 5         # the number of fold splitting the training and test sets
-Nfolds_val = 3     # the number of fold splitting the training and validating sets
-input_axis = 6                      # 3-> only acc, 6-> acc&gyr
-augmentation_methods = ['rotation'] # type the methods you will use in here, if non, type "None" instead
+repeats = 2                          # repeat times of the model
+fs = 100                             # sampling frequency of the IMU
+wk_label = 1                         # the y-label of walking
+window_size = 200                    # window size for model training, here is 2 seconds
+percentage = 0.5                     # the overlapping of windows
+Nfolds = 5                           # the number of fold splitting the training and test sets
+Nfolds_val = 3                       # the number of fold splitting the training and validating sets
+input_axis = 6                       # 3-> only acc, 6-> acc&gyr
+augmentation_methods = ['rotation']  # type the methods you will use, if no, type "None" instead
 ```
 
 
 ### 2.1.4 Data preparation
-The input data can be 3-axis acceleration or can be 6-axis acceleration and gyroscope data. 
+**What you need to do is to prepare the IMU in a folder with "mat" files. Each ".mat" file represents each subject and the signals are stored in variable "signal" of the mat file.**
 
+We load the data by using the function "load_matfiles" in the Python code "GaitRecognitionFunctions_general.py". After loading, we will get DataX, DataY, DataY_binary, and groups.
+**The columns of input "DataX" can be 6 axes [3-axis acceleration, 3-axis gyroscope] or only 3 axes [3-axis acceleration] (random directions).**
 
-The columns of input "DataX" are [3-axis acceleration, 3-axis gyroscope] or only [3-axis acceleration].[SMB; specify colums; does it matter which one is AP, ML, VT? or not?]
+In our paper, **the ADAPT dataset was used to train the model**, collected by Bourke et al, including semi-structured supervised and free-living unsupervised situations both with manually annotated labels based on video data. And X axis of the DataX responds to anteroposterior, Y:medial-lateral, Z: vertical. DataY includes all activity labels. DataY_binary includes walking and non-walking labels. Groups are the number of subjects, for further splitting datasets.
 
+The code loading data in the main, shown as below
+```
+DataX, DataY, DataY_binary, groups, filenames, subject_number = GR.load_matfiles(InputDataDir, wk_label, input_axis)
+DataX_new, DataY_binary_new, groups_new = delete_useless_label(DataX, DataY, DataY_binary, groups)    # Optional. To delete the activities that don't make sense but will affect the training results. Here, we delete "undefined" and "none".
+```
 
 ### 2.1.5 Model training
+
+Then there is nothing you need to modify. After splitting training, validating and testing datasets by subjects, the code will automatically augment the training and validating datasets according to your set in **2.1.3**. Finally, put all datasets into the model running, where includes segmenting windows, balancing data, and fitting model, then we can get the results "score_val", "score_ test", and model into the responding folders.
+
+Since each time, the splitting datasets contains different subjects' data, leading to different model results, so you can run it several times to select the model with best results.
+
+```
+Scores_val = list()
+Scores_test = list()
+
+for i in range(1,repeats):
+    print("===========" * 6, end="\n\n\n")
+    print('Repeat ', i)
+    X_train_val, X_test, y_train_val, y_test,groups_train_val,groups_test = GR.split_GroupNfolds(DataX_new,
+                                                                                                 DataY_binary_new,
+                                                                                                 groups_new,
+                                                                                                 Nfolds)
+
+    print(f'## 2) DA = {augmentation_methods}')
+    print("## 3) split train and validate data")
+    if augmentation_methods is not None:
+        X_train_val_all, y_train_val_all, groups_train_val_all = use_data_augmentation(X_train_val, y_train_val,
+                                                                                       groups_train_val, fs,
+                                                                                       augmentation_methods,
+                                                                                       input_axis)
+        X_train, X_val, y_train, y_val, groups_train, groups_val = GR.split_GroupNfolds(X_train_val_all,
+                                                                                        y_train_val_all,
+                                                                                        groups_train_val_all,
+                                                                                        Nfolds_val)
+    elif augmentation_methods is None:
+        X_train, X_val, y_train, y_val, groups_train, groups_val = GR.split_GroupNfolds(X_train_val,
+                                                                                        y_train_val,
+                                                                                        groups_train_val,
+                                                                                        Nfolds_val)
+
+
+    print("## 4) training the model")
+    CNN_model, model_history, final_epoch, score_val_i, score_test_i = GR.run_model(X_train,X_val,
+                                                                                    y_train,y_val,
+                                                                                    groups_train, groups_val,
+                                                                                    X_test, y_test, groups_test,
+                                                                                    window_size, percentage,
+                                                                                    i, ModelsInfoDir)
+
+    # combine results
+    score_val_i['No.'] = i
+    score_test_i['No.'] = i
+    score_val_i['ModelEpoch'] = final_epoch
+    score_test_i['ModelEpoch'] = final_epoch
+    Scores_val.append(score_val_i)
+    Scores_test.append(score_test_i)
+
+    # save
+    CNN_model.save(f'{ModelsSaveDir}/CNNmodel_{i}.h5')
+    save_split_datasets_info(ModelResultDir)
+    score_val_i.to_csv(f'{ModelResultDir}/scores_val.txt', mode='a', sep='\t', index=False, header=not i)
+    score_test_i.to_csv(f'{ModelResultDir}/scores_test.txt', mode='a', sep='\t', index=False, header=not i)
+
+save_dataframe(Scores_val, ModelResultDir, 'scores_val.xlsx')
+save_dataframe(Scores_test,ModelResultDir, 'scores_test.xlsx')
+```
+
+
 
 We used the ADAPT dataset to train the model. The ADAPT dataset is a IMU dataset collected on older adults by Bourke et al, which includes semi-structured supervised and free-living unsupervised situations both with manually annotated labels based on video data.  
 
@@ -134,7 +203,7 @@ The code for the training model is shown below:
 PythonCode /Main.py [SMB: but you say that this is the code to run the model on your own data, but here you say that this iss the code used to train? Shouldnt there be two seperate main files?]
 ```
 
-The pipeline of this code is shown as the below
+The pipeline of above process is shown as the below
 
 ![Flow Chart_ADAPT](images/flow%20chart_ADAPT.png)
 
