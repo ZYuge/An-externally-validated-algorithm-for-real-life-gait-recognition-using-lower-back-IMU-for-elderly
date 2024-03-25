@@ -2,7 +2,7 @@ This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the
 
 # Recognize real-world gait episodes based on deep learning methods
 
-We developed a convolutional neural network (CNN) to recognize real-world gait based on inertial measurement units (IMU) data and the CNN model worked perfectly on older adults (≥ 65 years old) and stroke patients who can walked without aids. Therefore, our developed CNN model are suitable for older people who walk slowly, as presented in paper **XXX (paper link).**
+We developed a convolutional neural network (CNN) to recognize real-world gait based on inertial measurement units (IMU) data and the CNN model worked perfectly on older adults (mean age 76.4(5.6) years) and stroke patients(mean age 72.4(12.7) year) who can walked without aids. Therefore, our developed CNN model are suitable for older people who walk slowly, as presented in paper **XXX (paper link).**
 
 ![Model Structure](images/Model%20Structure.png)
 **Figure1. CNN Model structure**
