@@ -30,7 +30,7 @@ External_validate_model.py
 Recognize_gait_unsupervised.py
 ```
 
-In addition, the repository contains subfunction code for training process **(see 3.1)** and data augmentation **(see 3.2)**.
+In addition, the repository contains **subfunction code for training process (see 3.1) and data augmentation (see 3.2)**.
 ```
 GaitRecognitionFunctions_general.py
 data_augmentation_general.py
