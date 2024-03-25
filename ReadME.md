@@ -35,9 +35,7 @@ data_augmentation_general.py
 You can select the code according to your need.
 |Aim |with true activity labels| code | Use existing models|
 | ---|----------------------- | -----------| ----------|
-|Trian a model| Yes | Model_training.py
-GaitRecognitionFunctions_general.py
-data_augmentation_general.py| No |
+|Trian a model| Yes | Model_training.py <br> GaitRecognitionFunctions_general.py <br>data_augmentation_general.py| No |
 |Validate externally| Yes | External_validate_model.py | Yes |
 |predict unknown data| No | Recognize_gait_unsupervised.py | Yes |
 
