@@ -56,7 +56,7 @@ GaitRecognitionFunctions_general.py
 data_augmentation_general.py
 ```
 
-### 1) Install the necessary packages
+### 2.1.1 Install the necessary packages
 Before running the code, make sure install all necessary packages "numpy, pandas, openpyxl, os" in your python environment with python version > 3.6.
 
 To check which packages are installed in your Python environment, you can type the following command on the Python console or terminal:
@@ -85,7 +85,7 @@ import openpyxl
 import os
 ```
 
-### 2) Setting folders
+### 2.1.2 Setting folders
 At the beginning of the main code "Model_training.py", we set the location of the input data and output. For folder of input data, it should contain data files, eg. mat files. For the folders of output, just set the location and the code will **automatically generate** the folder.
 ```
 # The folder of input
@@ -100,12 +100,12 @@ ModelsSaveDir = "./github_rwk/CNN_models_save"
 ModelsInfoDir = "./github_rwk/CNN_models_info"
 ```
 
-### 3) Data preparation
+### 2.1.3 Data preparation
 Secondly, place the data from the IMU files (low back) in the data folder
 
 The columns of input "DataX" are [3-axis acceleration, 3-axis gyroscope] or only [3-axis acceleration].[SMB; specify colums; does it matter which one is AP, ML, VT? or not?]
 
-### 4) Model training
+### 2.1.4 Model training
 
 We used the ADAPT dataset to train the model. The ADAPT dataset is a IMU dataset collected on older adults by Bourke et al, which includes semi-structured supervised and free-living unsupervised situations both with manually annotated labels based on video data.  
 
