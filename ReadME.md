@@ -205,7 +205,7 @@ The pipeline of above process is shown as the below
 ![Flow Chart_ADAPT](images/flow%20chart_ADAPT.png)
 
 
-## 2.2. Aim2: To externally validate the existing model
+## 2.2. Aim 2: To externally validate the existing model
 This aim is to validate an existing CNN externally by using a dataset with true activity labels (also walking and non-walking binary labels). **Following are the steps in main code "External_validate_model.py"**
 
 ### 2.2.1. Install and import the necessary packages
