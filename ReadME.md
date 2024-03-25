@@ -53,7 +53,7 @@ There are two required code files and 1 option file for this aim. Put all these 
 Model_training.py
 GaitRecognitionFunctions_general.py
 ```
-1 option file (subfunction)
+1 optional file (subfunction)
 ```
 data_augmentation_general.py
 ```
