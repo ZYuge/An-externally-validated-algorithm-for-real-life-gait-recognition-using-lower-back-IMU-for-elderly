@@ -8,6 +8,7 @@ We developed a convolutional neural network (CNN) to recognize real-world gait o
 
 ![Model Structure](images/Model%20Structure.png)
 **Figure1. CNN Model structure (The input IMU data can be 3-axis or 6-axis, W is the window size, 200 is 2 seconds with sampling frequency 100 Hz)**
+(Hyperparameters: Epochs = 30,Batch_size = 32, Filters = 64, Kernel_size = 3)
 
 ![Model performance_external dataset](/images/Model%20performance_external%20dataset.png)
 **Figure2. CNN Model performance on external dataset (stroke patients)(Note:DA, the abbreviation for data augmentation, here we use rotation 90° on xyz-axis, separately）**
@@ -57,7 +58,7 @@ GaitRecognitionFunctions_general.py # required
 data_augmentation_general.py        # optional
 ```
 
-### 2.1.1 Install the necessary packages
+### 2.1.1. Install the necessary packages
 Before running the code, make sure install all necessary packages "numpy, pandas, openpyxl, os" in your python environment with python version > 3.6.
 
 To **check** which packages are installed in your Python environment, you can type the following command on the Python console or terminal:
@@ -86,7 +87,7 @@ import openpyxl
 import os
 ```
 
-### 2.1.2 Setting folders
+### 2.1.2. Setting folders
 At the beginning of the main code "Model_training.py", we set the location of the input data and output. For folder of input data, it should contain data files, eg. mat files. For the folders of output, just set the location and the code will **automatically generate** the folder.
 ```
 # The folder of input
@@ -108,7 +109,7 @@ if not os.path.exists(ModelsInfoDir):
     os.makedirs(ModelsInfoDir)
 ```
 
-### 2.1.3 Setting parameters
+### 2.1.3. Setting parameters
 There are some parameters that need to be set in the main code. Below are the default values, you can modify them by your own.
 ```
 repeats = 2                          # repeat times of the model
@@ -122,7 +123,7 @@ input_axis = 6                       # 3-> only acc, 6-> acc&gyr
 augmentation_methods = ['rotation']  # type the methods you will use, if no, type "None" instead
 ```
 
-### 2.1.4 Data preparation
+### 2.1.4. Data preparation
 **What you need to do is to prepare the IMU data in a folder with "mat" files. The signals can be 6 axes [3-axis acceleration, 3-axis gyroscope] or only 3 axes [3-axis acceleration] (random directions), which you can set in 2.1.3 "input_axis".
 Each ".mat" file represents each subject and the signals are stored in variable "signal" of the mat file.**
 If the data is in .txt files, you can reference 2.2.4.
@@ -137,7 +138,7 @@ DataX, DataY, DataY_binary, groups, filenames, subject_number = GR.load_matfiles
 DataX_new, DataY_binary_new, groups_new = delete_useless_label(DataX, DataY, DataY_binary, groups)    # Optional. To delete the activities that don't make sense but will affect the training results. Here, we delete "undefined" and "none".
 ```
 
-### 2.1.5 Model training
+### 2.1.5. Model training
 Then there is nothing you need to modify. After splitting training, validating and testing datasets by subjects, the code will automatically augment the training and validating datasets according to your set in **2.1.3**. Finally, put all datasets into the model running, where includes segmenting windows, balancing data, and fitting model, then we can get the results "score_val", "score_ test", and model into the responding folders.
 
 Since each time, the splitting datasets contains different subjects' data, leading to different model results, so you can run it several times to select the model with best results.
@@ -207,7 +208,7 @@ The pipeline of above process is shown as the below
 ## 2.2. Aim2: To externally validate the existing model
 This aim is to validate an existing CNN externally by using a dataset with true activity labels (also walking and non-walking binary labels). **Following are the steps in main code "External_validate_model.py"**
 
-### 2.2.1 Install and import the necessary packages
+### 2.2.1. Install and import the necessary packages
 Import these packages, if not existing, install them accoding to the stpes 2.1.1.
 
 ```
@@ -223,7 +224,7 @@ import GaitRecognitionFunctions_general as GR
 import data_augmentation_general as DA
 ```
 
-### 2.2.2 Setting folders
+### 2.2.2. Setting folders
 Put the dataset into the input foler and set the path on the code. 
 ```
 ExValDataTxtDIr = './github_rwk_ExVal/InputData'
@@ -248,7 +249,7 @@ if not os.path.exists(ExValScoresDir):
     os.makedirs(ExValScoresDir)
 ```
 
-### 2.2.3 Setting parameters
+### 2.2.3. Setting parameters
 Set the parameters on the begining of the main code. 
 ```
 fs = XX            # sampling frequency of the sensor, can be different with the one in the model training
@@ -258,7 +259,7 @@ input_axis = 6     # 3-> only acc, 6-> acc&gyr
 best_model = f'{model_folder}/best_CNNmodel_name.h5'
 ```
 
-### 2.2.4 Data preparation
+### 2.2.4. Data preparation
 **We put all the IMU signals of walking and non-walking into separate ".txt" files under the input folder.** Also, the signals can be 6 axes [3-axis acceleration, 3-axis gyroscope] or only 3 axes [3-axis acceleration] (random directions). All subjects's signals are spliced vertically. The responding activity labels and subjects' number are spliced vertically and in different files.
 
 Anyway, there are 5 '.txt' files under the input folder. They are 
@@ -307,7 +308,7 @@ DataY_new = np.concatenate((DataY_clean, DataY_rot), axis=0)
 groups_new = np.concatenate((groups_clean, groups_rot), axis=0)
 ```
 
-### 2.2.5 Validating the existing Model
+### 2.2.5. Validating the existing Model
 There is nothing to modify for you.
 
 Before put the data into models, we segment data into windows
@@ -372,7 +373,7 @@ PythonCode /Recognize_gait_unsupervised.py
 ```
 
 
-## 3. Subfunctions
+## 3. Description of Subfunctions
 ### 3.1. Functions in "GaitRecognitionFunctions_general.py"
 ### 3.2. To augment the dataset
 
@@ -390,37 +391,10 @@ the hyperparameters of data augmentation are show as below: --> table
 | Rotation                   | [90°]             |
 
 
-### Parameters of our model
-
-window size=200 
-
-sampling points of the ADAPT data =100, external data = 104
-
-Epochs = 30
-
-Batch_size = 32
-
-Filters = 64 
-
-Kernel_size = 3
 
 
 
-### Results
-
-DA is data augmentation. [SMB: I would not use abbreviations; really no need for that]
-
-Below results are the average results after running 30 times for non DA version and 10 times for DA version.
-
-
-
-![Model performance_testing dataset](images/Model%20performance_testing%20dataset.png)
-
-![Model performance_validation dataset](images/Model%20performance_validation%20dataset.png)
-
-
-
-### References
+## 4. References
 
 [1] Bourke AK, Ihlen EAF, Bergquist R, Wik PB, Vereijken B, Helbostad JL. A physical activity reference data-set recorded from older adults using body-worn inertial sensors and video technology—The ADAPT study data-set. Sensors. 2017;17(3):559.
 
