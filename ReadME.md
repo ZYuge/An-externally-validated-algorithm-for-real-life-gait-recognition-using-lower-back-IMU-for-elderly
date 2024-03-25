@@ -1,5 +1,6 @@
 This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the Norwegian University of Science and Technology, Utrecht University of Applied Sciences, and Vrije Universiteit Amsterdam.
 
+
 # 1. Recognize real-world gait episodes based on deep learning methods
 
 We developed a convolutional neural network (CNN) to recognize real-world gait based on inertial measurement units (IMU) data and the CNN model worked perfectly on older adults (mean age 76.4(5.6) years) and stroke patients(mean age 72.4(12.7) year) who can walked without aids. Therefore, our developed CNN model are suitable for older people who walk slowly, as presented in paper **XXX (paper link).**
@@ -10,18 +11,19 @@ We developed a convolutional neural network (CNN) to recognize real-world gait b
 ![Model performance_external dataset](/images/Model%20performance_external%20dataset.png)
 **Figure2. CNN Model performance on external dataset (stroke patients)(Note:DA, the abbreviation for data augmentation, here we use rotation 90° on xyz-axis, separately）**
 
+
 ## 2. How to use the algorithm
 This repository contains 3 main Python code for different aims. 
 
-1) train a CNN model, **see 2.1**
+**1) train a CNN model, see 2.1**
 ```
 Model_training.py
 ```
-2) validate externally the existing model, **see 2.2**
+**2) validate externally the existing model, see 2.2**
 ```
 External_validate_model.py
 ```
-3) predict the unknown activities, **see 2.3**
+**3) predict the unknown activities, see 2.3**
 ```
 Recognize_gait_unsupervised.py
 ```
@@ -40,7 +42,7 @@ You can select the code according to your need.
 |predict unknown data| No | Recognize_gait_unsupervised.py | GaitRecognitionFunctions_general.py | Yes |
 
 
-## 2.1 Aim1: To train a CNN model
+## 2.1. Aim1: To train a CNN model
 
 There are two required code files and 1 option file for this aim. Put all these code into the same folder, for example ./github_rwk/", so that we can call subfuntions in the main functions.
 
@@ -103,8 +105,7 @@ Secondly, place the data from the IMU files (low back) in the data folder
 
 The columns of input "DataX" are [3-axis acceleration, 3-axis gyroscope] or only [3-axis acceleration].[SMB; specify colums; does it matter which one is AP, ML, VT? or not?]
 
-
-- ### 4) Model training
+### 4) Model training
 
 We used the ADAPT dataset to train the model. The ADAPT dataset is a IMU dataset collected on older adults by Bourke et al, which includes semi-structured supervised and free-living unsupervised situations both with manually annotated labels based on video data.  
 
@@ -119,7 +120,7 @@ The pipeline of this code is shown as the below
 ![Flow Chart_ADAPT](images/flow%20chart_ADAPT.png)
 
 
-## 2.2 Aim2: To externally validate the existing model
+## 2.2. Aim2: To externally validate the existing model
 For training and externally validating models, "DataY" and "groups" have the corresponding activity labels and subject numbers on each sampling point of DataX, respectively.
 
 ```
@@ -128,16 +129,18 @@ PythonCode /External_validate_model.py
 
 ![flow chart_external data](images/flow%20chart_external%20data.png)
 
-## 2.3 Aim3: To predict unknown activities
+## 2.3. Aim3: To predict unknown activities
 
 For model training [SMB: but this piece is about prediction, not trainnig?, the columns of input signals are 3-axis acceleration, 3-axis gyroscope, 3-axis magnitude data, and activity labels.
 
 ```
 PythonCode /Recognize_gait_unsupervised.py
 ```
+
+
 ## 3. Subfunctions
-### 3.1 Functions in "GaitRecognitionFunctions_general.py"
-### 3.2 To augment the dataset
+### 3.1. Functions in "GaitRecognitionFunctions_general.py"
+### 3.2. To augment the dataset
 
 ```
 PythonCode /data_augmentation_general.py
@@ -153,7 +156,6 @@ the hyperparameters of data augmentation are show as below: --> table
 | Rotation                   | [90°]             |
 
 
-
 ### Parameters of our model
 
 window size=200 
@@ -167,7 +169,6 @@ Batch_size = 32
 Filters = 64 
 
 Kernel_size = 3
-
 
 
 
