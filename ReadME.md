@@ -410,30 +410,40 @@ percentage = 0.5    # the same value during training process
 input_axis = 6      # optional, 6 -> acceleration& gyroscope, 3 -> only acc
 ```
 
-### 2.3.4. Load and segment data
+### 2.3.4. Load the best model
+```
+if input_axis == 3:
+   best_model = './best_cnn_models/CNNmodel_3acc.h5'
+elif input_axis == 6:
+   best_model = './best_cnn_models/CNNmodel_6acc.h5'
+else:
+    raise ValueError("Invalid value for data_axis. It should be either 3 or 6.")
+    
+cnn_model = load_model(best_model)
+plot_model(cnn_model, to_file=f'{PredictPNGDir}/Model Structure.png', show_shapes=True, show_layer_names=True) # save the structure
+```
+
+### 2.3.5. Load and segment data
 If data are in .txt files, to load the data, please reference 2.2.1. If data are in .mat files,please reference 2.1.1.
 The code of segmentation is the same,
 ```
 X_win, groups_win = GR.segment_signal_unsupervised(DataX, groups, window_size, percentage)
 ```
 
-### 2.3.5. Predict y label
+### 2.3.6. Predict y label
 Here, we got the best CNN models from 6 axes and 3 axis separately in the gituhub folder. So we can directly load the model, predict the y labels and plot them with signals.
 
 ```
-model_path = './best_cnn_models/CNNmodel_6axes.h5'
-OR
-model_path = './best_cnn_models/CNNmodel_3axes.h5'
-
-cnn_model = load_model(file_path)
 y_predict = cnn_model.predict(X_win).round()
 
+# remove the overlapping in windows, although it does not influence the results
 X_rm_repeat = X_win[:, :100, :]
 X = X_rm_repeat.reshape(-1, 3)
 y_predict_final = np.repeat(y_predict, 100, axis=0)
 groups_final = np.repeat(groups_win, 100, axis=0)
 time_seconds = np.arange(len(X)) / fs
 
+# plot
 plt.figure(figsize=(19, 10))
 plt.plot(time_seconds, X[:, 0])
 plt.plot(time_seconds, y_predict_final[:, 1])
@@ -444,7 +454,7 @@ plt.ylabel("Gravity Acceleration (9.8 m/s²)", fontsize=16)
 plt.tick_params(axis='x', labelsize=15, labelcolor='black', pad=10)
 plt.tick_params(axis='y', labelsize=15, labelcolor='black', pad=10)
 
-plt.savefig(f'{PredictPNGDir}/VTacc_pred_y.png') # AccX is vertical acc
+plt.savefig(f'{PredictPNGDir}/VTacc_pred_y.png') # here,AccX is vertical acc
 plt.savefig(f'{PredictSVGDir}/VTacc_pred_y.svg')
 ```
 
