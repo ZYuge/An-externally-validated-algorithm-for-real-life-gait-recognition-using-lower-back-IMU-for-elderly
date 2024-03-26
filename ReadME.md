@@ -521,6 +521,7 @@ The methods and hyperparameters of them are show as below and you can modify the
 ## 4. References
 
 [1] Bourke AK, Ihlen EAF, Bergquist R, Wik PB, Vereijken B, Helbostad JL. A physical activity reference data-set recorded from older adults using body-worn inertial sensors and video technology—The ADAPT study data-set. Sensors. 2017;17(3):559.
+
 [2] Our ADAPT paper after publishing
 
 
