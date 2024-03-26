@@ -1,5 +1,5 @@
-# load variable 'signal' in each .mat file (total 20 files) from a folder 'act17_mat';
-# 1-11 columns in each signal: 1-3 ACC xyz;4-6 GYR xyz; 7-9 MAG xyz; 10 activity Labels; 11 Time
+# load variable 'signal' in each .mat file 
+# For the ADAPT dataset, 1-11 columns in each signal: 1-3 ACC xyz;4-6 GYR xyz; 7-9 MAG xyz; 10 activity Labels; 11 Time
 import matplotlib.pyplot as plt
 import GaitRecognitionFunctions_general as GR
 import data_augmentation_general as DA
@@ -92,10 +92,10 @@ input_axis = 6     # 3-> only acc, 6-> acc&gyr
 augmentation_methods = ['rotation']
 # augmentation_methods = None
 
-InputDataDir = '/Users/yugezi/Desktop/1.1_ProjectVIBE_MP/3_ADAPT/3_Data/1_uSenseL5_data/act17_mat/'
-ModelResultDir = "/Users/yugezi/PycharmProjects/ADAPT-project/Github_OpenSource/CNN_models_results"
-ModelsSaveDir = "/Users/yugezi/PycharmProjects/ADAPT-project/Github_OpenSource/CNN_models_save"
-ModelsInfoDir = "/Users/yugezi/PycharmProjects/ADAPT-project/Github_OpenSource/CNN_models_info"
+InputDataDir = './github_rwk/InputData/'
+ModelResultDir = "./github_rwk/CNN_models_results"
+ModelsSaveDir = "./github_rwk/CNN_models_save"
+ModelsInfoDir = "./github_rwk/CNN_models_info"
 
 if not os.path.exists(ModelResultDir):
     os.makedirs(ModelResultDir)
