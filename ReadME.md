@@ -421,9 +421,9 @@ X_win, groups_win = GR.segment_signal_unsupervised(DataX, groups, window_size, p
 Here, we got the best CNN models from 6 axes and 3 axis separately in the gituhub folder. So we can directly load the model, predict the y labels and plot them with signals.
 
 ```
-model_path = '/Best CNN models/CNNmodel_6axes.h5'
+model_path = './best_cnn_models/CNNmodel_6axes.h5'
 OR
-model_path = '/Best CNN models/CNNmodel_3axes.h5'
+model_path = './best_cnn_models/CNNmodel_3axes.h5'
 
 cnn_model = load_model(file_path)
 y_predict = cnn_model.predict(X_win).round()
