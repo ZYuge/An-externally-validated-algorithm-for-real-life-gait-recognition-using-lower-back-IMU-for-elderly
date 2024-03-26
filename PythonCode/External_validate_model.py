@@ -18,26 +18,22 @@ fs = 104  # raw sampling frequency
 window_size = 200
 percentage = 0.5
 input_axis = 6     # 3-> only acc, 6-> acc&gyr
-subjects_del = [1747, 1968, 2152, 9848,5672]
-ExValDataTxtDIr = "/Users/yugezi/Desktop/1.1_ProjectVIBE_MP/3_ADAPT/5_MichielPunt_ExternalValitaionData/UsedInModel_txtFiles"
-model_folder = '/Users/yugezi/PycharmProjects/ADAPT-project/Acc only/TrainedModel_ROT90_Results/CNN_models_save'
-ExValPredictPNGDir = "/Users/yugezi/PycharmProjects/ADAPT-project/Acc only/TrainedModel_ROT90_Results/CNN_models_use_byExValData/png"
-ExValPredictSVGDir = "/Users/yugezi/PycharmProjects/ADAPT-project/Acc only/TrainedModel_ROT90_Results/CNN_models_use_byExValData/svg"
+
+ExValDataTxtDIr = "./github_rwk_ExVal/InputData"
+model_folder = './github_rwk/CNN_models_save'
+ExValPredictPNGDir = './github_rwk_ExVal/png'
+ExValPredictSVGDir = './github_rwk_ExVal/svg'
 ExValScoresDir = "/Users/yugezi/PycharmProjects/ADAPT-project/Acc only/TrainedModel_ROT90_Results/CNN_models_result"
 
 if not os.path.exists(ExValPredictPNGDir):
     os.makedirs(ExValPredictPNGDir)
 if not os.path.exists(ExValPredictSVGDir):
     os.makedirs(ExValPredictSVGDir)
+if not os.path.exists(ExValScoresDir):
+    os.makedirs(ExValScoresDir)
+    
 
-print(model_folder)
-print(ExValDataTxtDIr)
-# save the best model structure picture
-best_model = f'{model_folder}/CNNmodel_8.h5'
-cnn_model = load_model(best_model)
-plot_model(cnn_model, to_file=f'{ExValScoresDir}/Model Structure.png', show_shapes=True, show_layer_names=True)
-
-# load michiel's data
+# load external data
 signals_sta = np.loadtxt(f'{ExValDataTxtDIr}/signals_sta.txt')
 signals_wk = np.loadtxt(f'{ExValDataTxtDIr}/signals_wk.txt')
 y_sta = np.loadtxt(f'{ExValDataTxtDIr}/y_sta.txt')
@@ -46,7 +42,6 @@ group_sta = np.loadtxt(f'{ExValDataTxtDIr}/group_sta.txt')
 group_wk = np.loadtxt(f'{ExValDataTxtDIr}/group_wk.txt')
 with open(f'{ExValDataTxtDIr}/filenames_balance','rb') as fp:
     filenames_sta = pickle.load(fp)
-
 with open(f'{ExValDataTxtDIr}/filenames_wk', 'rb') as fp:
     filenames_wk = pickle.load(fp)
 
@@ -63,22 +58,17 @@ DataY = DataY_tmp.reshape(-1,)
 groups_tmp = np.vstack((group_wk.reshape(-1,1),group_sta.reshape(-1,1)))
 groups = groups_tmp.reshape(-1,)
 
-# Delete these subjects  whose signal looks obviously like walking in balance test
-indices = np.array(np.where(np.in1d(groups,subjects_del)))
-DataX_clean = np.delete(DataX, indices, axis=0)
-DataY_clean = np.delete(DataY, indices, axis=0)
-groups_clean = np.delete(groups, indices, axis=0)
 
-# add DA
-DataX_rot, DataY_rot, groups_rot = DA.rotation_acc(DataX_clean, DataY_clean, groups_clean, [90])  # new add
-DataX_new = np.concatenate((DataX_clean, DataX_rot), axis=0)
-DataY_new = np.concatenate((DataY_clean, DataY_rot), axis=0)
-groups_new = np.concatenate((groups_clean, groups_rot), axis=0)
+# add DA,rotate 90° on 3axes, respectively
+DataX_rot, DataY_rot, groups_rot = DA.rotation_acc(DataX, DataY, groups, [90])  
+DataX_new = np.concatenate((DataX, DataX_rot), axis=0)
+DataY_new = np.concatenate((DataY, DataY_rot), axis=0)
+groups_new = np.concatenate((groups, groups_rot), axis=0)
 
 # segment data into windows and categorical y_data
 X_win, y_win, groups_win = GR.segment_signal(DataX_new, DataY_new, groups_new, window_size, percentage)
 
-# load existing models
+# load existing models in the model_folder
 scores_all = []
 for filename in os.listdir(model_folder):
     if filename.endswith('.h5'):
@@ -99,6 +89,7 @@ for filename in os.listdir(model_folder):
         score = score.assign(loop_time=numbers.group())
         scores_all.append(score)
 
+        # plot vertical acceleration with true and predicted ylabel
         time_seconds = np.arange(len(X)) / fs
         plt.figure(figsize=(19, 10))
         plt.plot(time_seconds, X[:, 0])
@@ -118,4 +109,9 @@ flattened_scores = [np.ravel(arr) for arr in scores_all]
 scores = pd.DataFrame(flattened_scores, columns=["Accuracy","Precision","Sensitivity","F1-score","Specificity","loop_time"])
 print('CNN model results of external dataset.\n', scores)
 scores.to_excel(f"{ExValScoresDir}/scores_external_validation.xlsx",index=False)
+
+# save the best model structure picture,eg, 8th is the best
+best_model = f'{model_folder}/CNNmodel_8.h5'
+cnn_model = load_model(best_model)
+plot_model(cnn_model, to_file=f'{ExValScoresDir}/Model Structure.png', show_shapes=True, show_layer_names=True)
 
