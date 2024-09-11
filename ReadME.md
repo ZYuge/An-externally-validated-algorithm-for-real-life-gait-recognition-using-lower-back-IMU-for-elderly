@@ -26,6 +26,7 @@ We also provide the best-performing model that we have obtained, into which you 
 **Need to do: add the performance of the best model(acc,precision,sensitivity on training, testing and external validation)**  
 
 In **"main_code.py"**, you can call the functions in **"GaitRecognitionFunctions.py"** for following different aims.  
+**Need to do: add a picture in the end, introducing functions contained in GR with the process direction**  
 
 ```
 import GaitRecognitionFunctions as GR
@@ -79,56 +80,10 @@ GR.predict_data_unsupervised(X, model_path, window_size, overlap_rate)
 `ModelsSaveDir`: store model with '.h5' in each training repeat.  
 `ModelsResultDir`: store the model performance in each training repeat. 
 `ExValDataTxtDir`: store the input data for external validation. Here, the data was stored in '.txt'.
-`ExValScoreDir`: store the model performance on external validation. 
+`ExValScoreDir`: store the model performance on external validation, picture of true and predicted labels on signals. 
 
 
-
-
-Explanations to the begining settings in **"main_code.py"**.
-|Aim |Data with true activity labels| Main code | Subfunction | Use existing models|
-| ---|----------------------- | -----------| ----------|----------|
-|Trian a model| Yes | Model_training.py | GaitRecognitionFunctions_general.py <br>data_augmentation_general.py| No |
-|Validate externally| Yes | External_validate_model.py | GaitRecognitionFunctions_general.py <br>data_augmentation_general.py| Yes |
-|Predict the unknown data| No | Recognize_gait_unsupervised.py | GaitRecognitionFunctions_general.py | Yes |
-
-
-### 2.1.2. Setting folders
-At the beginning of the main code "Model_training.py", we set the location of the input data and output. For folder of input data, it should contain data files, eg. mat files. For the folders of output, just set the location and the code will **automatically generate** the folder.
-```
-# The folder of input
-InputDataDir = './github_rwk/InputData/'
-
-# The folders of output, set the location and it can be automatically generated later
-# a) store the model performance of testing and validating datasets
-ModelResultDir = "./github_rwk/CNN_models_results"
-# b) store the '.h5' model files 
-ModelsSaveDir = "./github_rwk/CNN_models_save"
-# c) will generate 3 subfolders, i.e., "InitialWeights", "loss plot" and "number of windows", storing the related paramters during the training
-ModelsInfoDir = "./github_rwk/CNN_models_info"
-
-if not os.path.exists(ModelResultDir):
-    os.makedirs(ModelResultDir)
-if not os.path.exists(ModelsSaveDir):
-    os.makedirs(ModelsSaveDir)
-if not os.path.exists(ModelsInfoDir):
-    os.makedirs(ModelsInfoDir)
-```
-
-### 2.1.3. Setting parameters
-There are some parameters that need to be set in the main code. Below are the default values, you can modify them by your own.
-```
-repeats = 2                          # repeat times of the model
-fs = 100                             # sampling frequency of the IMU
-wk_label = 1                         # the y-label of walking
-window_size = 200                    # window size for model training, here is 2 seconds
-percentage = 0.5                     # the overlapping of windows
-Nfolds = 5                           # the number of fold splitting the training and test sets
-Nfolds_val = 3                       # the number of fold splitting the training and validating sets
-input_axis = 6                       # 3-> only acc, 6-> acc&gyr
-augmentation_methods = ['rotation']  # type the methods you will use, if no, type "None" instead
-```
-
-### 2.1.4. Load data
+## 3. Format of data
 **What you need to do is to prepare the IMU data in a folder with "mat" files. The signals can be 6 axes [3-axis acceleration, 3-axis gyroscope] or only 3 axes [3-axis acceleration] (random directions), which you can set in 2.1.3 "input_axis".
 Each ".mat" file represents each subject and the signals are stored in variable "signal" of the mat file.**
 If the data is in .txt files, you can reference 2.2.4.
@@ -141,41 +96,6 @@ The code loading data in the main, shown as below
 ```
 DataX, DataY, DataY_binary, groups, filenames, subject_number = GR.load_matfiles(InputDataDir, wk_label, input_axis)
 DataX_new, DataY_binary_new, groups_new = delete_useless_label(DataX, DataY, DataY_binary, groups)    # Optional. To delete the activities that don't make sense but will affect the training results. Here, we delete "undefined" and "none".
-```
-
-### 2.2.2. Setting folders
-Put the dataset into the input foler and set the path on the code. 
-```
-ExValDataTxtDIr = './github_rwk_ExVal/InputData'
-```
-
-Set the path of the existing models, which can be the results from 2.1.
-```
-model_folder = "./github_rwk/CNN_models_save"
-```
-
-Set the path of output folders. If they aren't existing, they can be automatically generated.
-```
-ExValPredictPNGDir = "./github_rwk_ExVal/png"  # the figures of vertical acceleration with true and predicted labels
-ExValPredictSVGDir = "./github_rwk_ExVal/svg"
-ExValScoresDir = "./github_rwk_ExVal/CNN_models_result"
-
-if not os.path.exists(ExValPredictPNGDir):
-    os.makedirs(ExValPredictPNGDir)
-if not os.path.exists(ExValPredictSVGDir):
-    os.makedirs(ExValPredictSVGDir)
-if not os.path.exists(ExValScoresDir):
-    os.makedirs(ExValScoresDir)
-```
-
-### 2.2.3. Setting parameters
-Set the parameters on the begining of the main code. 
-```
-fs = XX            # sampling frequency of the sensor, can be different with the one in the model training
-window_size = 200  # the same size with the model training
-percentage = 0.5   # the overlapping rate of windows
-input_axis = 6     # 3-> only acc, 6-> acc&gyr
-model_folder = "./github_rwk/CNN_models_save" # models from training process 2.2.1, or the existing models you want to validate externally
 ```
 
 ### 2.2.4. Load and segment data 
@@ -232,52 +152,7 @@ Before put the data into models, we segment data into windows
 X_win, y_win, groups_win = GR.segment_signal(DataX_new, DataY_new, groups_new, window_size, percentage)
 ```
 
-### 2.2.5. Validating the existing Model
-There is nothing to modify for you. We use the existing models from the folder  and plot the vertical accelerations with true and predicted y labels.
 
-```
-# load existing models from the folders and predict y labels in a loop
-scores_all = []
-model_folder = "./github_rwk/CNN_models_save"
-for filename in os.listdir(model_folder): 
-    if filename.endswith('.h5'):
-        file_path = os.path.join(model_path)
-        numbers = re.search(r'(\d+)\.', filename)
-        print(numbers.groups())
-
-        cnn_model = load_model(file_path)
-        y_predict = cnn_model.predict(X_win).round()
-
-        # remove the overlapping, although it does not influence the results
-        X_rm_repeat = X_win[:, :100, :]
-        X = X_rm_repeat.reshape(-1, 3)
-        y_predict_final = np.repeat(y_predict, 100, axis=0)
-        y_true_final = np.repeat(y_win, 100, axis=0)
-        groups_final = np.repeat(groups_win, 100, axis=0)
-        score = GR.model_performance(y_true_final, y_predict_final)
-        score = score.assign(loop_time=numbers.group())
-        scores_all.append(score)
-
-        time_seconds = np.arange(len(X)) / fs
-        plt.figure(figsize=(19, 10))
-        plt.plot(time_seconds, X[:, 0])
-        plt.plot(time_seconds, y_predict_final[:, 1])
-        plt.plot(time_seconds, -y_true_final[:, 1])  # true labels
-        plt.title('Predicted and True Vertical Acceleration')  #accX
-        plt.legend(['Signal', 'Predicted Label (wk=1)', 'True Label (wk=-1)'])
-        plt.xlabel("Seconds", fontsize=20)
-        plt.ylabel("Gravity Acceleration (9.8 m/s²)", fontsize=16)
-        plt.tick_params(axis='x', labelsize=15, labelcolor='black', pad=10)
-        plt.tick_params(axis='y', labelsize=15, labelcolor='black', pad=10)
-
-        plt.savefig(f'{ExValPredictPNGDir}/signal_AccxModel{numbers.group()}png') # AccX is vertical acc
-        plt.savefig(f'{ExValPredictSVGDir}/signal_AccxModel{numbers.group()}svg')
-
-flattened_scores = [np.ravel(arr) for arr in scores_all]
-scores = pd.DataFrame(flattened_scores, columns=["Accuracy","Precision","Sensitivity","F1-score","Specificity","loop_time"])
-print('CNN model results of external dataset.\n', scores)
-scores.to_excel(f"{ExValScoresDir}/scores_external_validation.xlsx",index=False)
-```
 
 The pipeline of above process is shown as the below
 
@@ -292,41 +167,6 @@ You can choose either 6 axes or only 3-axis acceleration to predict the activity
 The main code we need to use is 
 ```
 PythonCode /Recognize_gait_unsupervised.py
-```
-
-### 2.3.1. Import the necessary packages
-```
-import os
-import re
-import pickle
-import numpy as np
-import matplotlib.pyplot as plt
-import GaitRecognitionFunctions_general as GR
-from tensorflow.keras.models import load_model
-from keras.utils import plot_model
-```
-
-### 2.3.2. Setting folders
-Set the folders of input and ouput. Input data should be put into the input folder.
-
-```
-InputDataDir = "XXXX"
-PredictPNGDir = "./github_rwk_predict/png"
-PredictSVGDir = "./github_rwk_predict/svg"
-
-if not os.path.exists(PredictPNGDir):
-    os.makedirs(PredictPNGDir)
-if not os.path.exists(PredictSVGDir):
-    os.makedirs(PredictSVGDir)
-
-```
-
-### 2.3.3. Setting parameters
-```
-fs = XXX            # sampling frequency of the sensor
-window_size = 200   # the same value during training process
-percentage = 0.5    # the same value during training process
-input_axis = 6      # optional, 6 -> acceleration& gyroscope, 3 -> only acc
 ```
 
 ### 2.3.4. Load the best model
@@ -379,24 +219,6 @@ plt.savefig(f'{PredictSVGDir}/VTacc_pred_y.svg')
 
 ## 3. Description of Subfunctions
 ### 3.1. Functions in "GaitRecognitionFunctions_general.py"
-Packages needed are 
-```
-import os
-import pandas as pd
-import scipy.io as spio
-import numpy as np
-import matplotlib.pyplot as plt
-from tensorflow import keras
-from keras.callbacks import EarlyStopping
-from keras.models import Sequential,load_model
-from keras.layers import Dense,Flatten,Dropout,Conv1D,MaxPooling1D
-from tensorflow.keras.utils import to_categorical
-from sklearn.utils import shuffle
-from sklearn.model_selection import GroupKFold, LeaveOneGroupOut
-from sklearn.metrics import f1_score, accuracy_score, precision_score, recall_score, confusion_matrix
-import re
-import pickle
-```
 
 The functions contain following subfuntions, and you can call them by
 ```
