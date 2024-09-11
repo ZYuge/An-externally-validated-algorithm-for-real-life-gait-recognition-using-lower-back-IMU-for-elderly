@@ -4,11 +4,15 @@ This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the
 
 # 1. Recognize real-world gait episodes based on deep learning methods
 
-We developed a convolutional neural network (CNN) to recognize real-world gait or not **(binary classification)** based on inertial measurement units (IMU) data from **lower back** and the CNN model worked perfectly on older adults (mean age 76.4(5.6) years) and stroke patients(mean age 72.4(12.7) year) who can walked without aids. Therefore, our developed CNN model are suitable for older people who walk slowly, as presented in paper **XXX (paper link).**
+We developed a convolutional neural network (CNN) based on inertial sensor data of the lower back (L5) to classify real-life activities in two categories, gait and non-gait, as presented in paper **XXX (paper link)**.
+
+This model is suitable for older people who walk slowly. The data for model training came from healthy and gait-impaired older adults with mean age 76.4(5.6) years old. The data for externally validation came from stroke survivors who could walk independently at a mean age of 72.4 (12.7) years. 
+
+We provides the codes for process 
 
 ![Model Structure](images/Model%20Structure.png)
 **Figure1. CNN Model structure (The input IMU data can be 3-axis or 6-axis, W is the window size, 200 is 2 seconds with sampling frequency 100 Hz)**
-(Hyperparameters: Epochs = 30,Batch_size = 32, Filters = 64, Kernel_size = 3)
+(Hyperparameters: Epochs = 30, Batch_size = 32, Filters = 64, Kernel_size = 3)
 
 ![Model performance_external dataset](/images/Model%20performance_external%20dataset.png)
 **Figure2. CNN Model performance on external dataset (stroke patients)(Note:DA, the abbreviation for data augmentation, here we use rotation 90° on xyz-axis, separately）**
@@ -16,6 +20,11 @@ We developed a convolutional neural network (CNN) to recognize real-world gait o
 
 
 ## 2. How to use the algorithm
+We provide the code for the whole process, including **data preprocessing** (data reading, balancing, augmentation and segmentation), **model training** (model evaluation, fit,  and overfitting prevention), and **external validation process** (data reading, model prediction, model performance evaluation).
+
+We also provide the best-performing model that we have obtained, into which you can put your sensor data to get the binary results. 
+**Need to do: (acc,precision,sensitivity on training, testing and external validation)**
+
 For different aims, you can choose different main Python code. 
 
 **1) train a CNN model, see 2.1**
