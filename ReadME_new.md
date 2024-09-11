@@ -2,7 +2,7 @@ This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the
 
 
 
-# 1. Recognize real-world gait episodes based on deep learning methods
+# 1. Recognize real-life gait episodes using lower back IMU for older adults
 
 We developed a convolutional neural network (CNN) based on inertial sensor data of the lower back (L5) to classify real-life activities in two categories, gait and non-gait, as presented in paper **XXX (paper link)**.
 
@@ -18,81 +18,48 @@ This model is suitable for older people who walk slowly. The data for model trai
 
 
 ## 2. How to use the algorithm
-We provide the code for the whole process, including **data preprocessing** (data reading, balancing, augmentation and segmentation), **model training** (model evaluation, fit,  and overfitting prevention), and **external validation process** (data reading, model prediction, model performance evaluation).
+Before running the code, you need to install the necessary packages in python environment (versions 3.7 and above), including: os, re, pickle, math, openpyxl,h5py,numpy,pandas,scipy,matplotlib,tensorflow, keras, and sklearn.
 
-We also provide the best-performing model that we have obtained, into which you can put your sensor data to get the binary results. 
-**Need to do: (acc,precision,sensitivity on training, testing and external validation)**
+We provide the code for the whole process, including **data preprocessing** (data reading, balancing, augmentation and segmentation), **model training (Aim 1)** (model evaluation, fit,  and overfitting prevention), and **external validation process (Aim 2)** (data reading, model prediction, model performance evaluation).
 
-This code can be used in python versions 3.7 and above. For different aims, you can choose different main Python code. 
+We also provide the best-performing model that we have obtained, into which you can put your sensor data to get the binary results **(Aim 3)**. 
+**Need to do: add the performance of the best model(acc,precision,sensitivity on training, testing and external validation)**
 
-**1) train a CNN model, see 2.1**
+In **"main_code.py"**, you can call the functions in **"GaitRecognitionFunctions.py"** for following different aims. 
+
 ```
-Model_training.py
-```
-**2) validate externally the existing model, see 2.2**
-```
-External_validate_model.py
-```
-**3) predict the unknown activities, see 2.3**
-```
-Recognize_gait_unsupervised.py
+import GaitRecognitionFunctions as GR
 ```
 
-In addition, the repository contains **subfunction code for training process (see 3.1) and data augmentation (see 3.2)**.
+**1) train a CNN model**
 ```
-GaitRecognitionFunctions_general.py
-data_augmentation_general.py
+GR.train(repeats, DataX, DataY_binary, groups, Nfolds, augmentation_methods, input_axis, Nfolds_val, fs_trainingdata,
+          window_size, overlap_rate, ModelsInfoDir, ModelsSaveDir, ModelResultDir)
 ```
 
-You can select the code according to your need.
+The `GR.train()` is responsible for data preprocessing, repeated holdouts-validation, data augmentation, model training, and model saving. It controls the model training process and saves the results through a series of input parameters.
+
+**2) validate externally the existing model**
+```
+GR.validation(fs_validationdata, window_size, overlap_rate, input_axis, model_path, DataX, DataY, groups,
+               augmentation_methods, plotsingal, ExValScoresDir)
+```
+
+This `GR.validation()` is responsible for loading an existing pre-trained model, visualizes its structure, loading external validation data, and performing model using the specified settings, such as window size, overlap rate, and augmentation methods. The results and plots are stored in the directory `ExValScoresDir`.
+
+**3) predict the unknown activities**
+```
+GR.predict_data_unsupervised(X, model_path, window_size, overlap_rate)
+```
+
+
+Explanations to the begining settings in **"main_code.py"**.
 |Aim |Data with true activity labels| Main code | Subfunction | Use existing models|
 | ---|----------------------- | -----------| ----------|----------|
 |Trian a model| Yes | Model_training.py | GaitRecognitionFunctions_general.py <br>data_augmentation_general.py| No |
 |Validate externally| Yes | External_validate_model.py | GaitRecognitionFunctions_general.py <br>data_augmentation_general.py| Yes |
 |Predict the unknown data| No | Recognize_gait_unsupervised.py | GaitRecognitionFunctions_general.py | Yes |
 
-
-## 2.1. Aim 1: To train a CNN model
-There are 1 main code and 2 subfunction code for this aim. Put all these code into the same folder, for example ./github_rwk/", so that we can call subfuntions in the main functions.
-
-The main code
-```
-Model_training.py
-```
-The subfunciton code
-```
-GaitRecognitionFunctions_general.py # required
-data_augmentation_general.py        # optional
-```
-
-### 2.1.1. Install the necessary packages
-Before running the code, make sure install all necessary packages "numpy, pandas, openpyxl, os" in your python environment with python version > 3.6.
-
-To **check** which packages are installed in your Python environment, you can type the following command on the Python console or terminal:
-```
-pip list
-```
-If you're using Anaconda or Miniconda, you can use the conda list command:
-```
-conda list
-```
-
-If not, you can **install** these packages, by below code
-```
-pip install package_name
-or
-conda install package_name
-```
-
-Finally, **import** necessary packages in the main code "Model_training.py"
-```
-import GaitRecognitionFunctions_general as GR
-import data_augmentation_general as DA
-import numpy as np
-import pandas as pd
-import openpyxl
-import os
-```
 
 ### 2.1.2. Setting folders
 At the beginning of the main code "Model_training.py", we set the location of the input data and output. For folder of input data, it should contain data files, eg. mat files. For the folders of output, just set the location and the code will **automatically generate** the folder.
@@ -143,92 +110,6 @@ The code loading data in the main, shown as below
 ```
 DataX, DataY, DataY_binary, groups, filenames, subject_number = GR.load_matfiles(InputDataDir, wk_label, input_axis)
 DataX_new, DataY_binary_new, groups_new = delete_useless_label(DataX, DataY, DataY_binary, groups)    # Optional. To delete the activities that don't make sense but will affect the training results. Here, we delete "undefined" and "none".
-```
-
-### 2.1.5. Model training
-Then there is nothing you need to modify. After splitting training, validating and testing datasets by subjects, the code will automatically augment the training and validating datasets according to your set in **2.1.3**. Finally, put all datasets into the model running, where includes segmenting windows, balancing data, and fitting model, then we can get the results "score_val", "score_ test", and model into the responding folders.
-
-Since each time, the splitting datasets contains different subjects' data, leading to different model results, so you can run it several times to select the model with best results.
-
-```
-Scores_val = list()
-Scores_test = list()
-
-for i in range(1,repeats):
-    print("===========" * 6, end="\n\n\n")
-    print('Repeat ', i)
-    X_train_val, X_test, y_train_val, y_test,groups_train_val,groups_test = GR.split_GroupNfolds(DataX_new,
-                                                                                                 DataY_binary_new,
-                                                                                                 groups_new,
-                                                                                                 Nfolds)
-
-    print(f'## 2) DA = {augmentation_methods}')
-    print("## 3) split train and validate data")
-    if augmentation_methods is not None:
-        X_train_val_all, y_train_val_all, groups_train_val_all = use_data_augmentation(X_train_val, y_train_val,
-                                                                                       groups_train_val, fs,
-                                                                                       augmentation_methods,
-                                                                                       input_axis)
-        X_train, X_val, y_train, y_val, groups_train, groups_val = GR.split_GroupNfolds(X_train_val_all,
-                                                                                        y_train_val_all,
-                                                                                        groups_train_val_all,
-                                                                                        Nfolds_val)
-    elif augmentation_methods is None:
-        X_train, X_val, y_train, y_val, groups_train, groups_val = GR.split_GroupNfolds(X_train_val,
-                                                                                        y_train_val,
-                                                                                        groups_train_val,
-                                                                                        Nfolds_val)
-
-
-    print("## 4) training the model")
-    CNN_model, model_history, final_epoch, score_val_i, score_test_i = GR.run_model(X_train,X_val,
-                                                                                    y_train,y_val,
-                                                                                    groups_train, groups_val,
-                                                                                    X_test, y_test, groups_test,
-                                                                                    window_size, percentage,
-                                                                                    i, ModelsInfoDir)
-
-    # combine results
-    score_val_i['No.'] = i
-    score_test_i['No.'] = i
-    score_val_i['ModelEpoch'] = final_epoch
-    score_test_i['ModelEpoch'] = final_epoch
-    Scores_val.append(score_val_i)
-    Scores_test.append(score_test_i)
-
-    # save
-    CNN_model.save(f'{ModelsSaveDir}/CNNmodel_{i}.h5')
-    save_split_datasets_info(ModelResultDir)
-    score_val_i.to_csv(f'{ModelResultDir}/scores_val.txt', mode='a', sep='\t', index=False, header=not i)
-    score_test_i.to_csv(f'{ModelResultDir}/scores_test.txt', mode='a', sep='\t', index=False, header=not i)
-
-save_dataframe(Scores_val, ModelResultDir, 'scores_val.xlsx')
-save_dataframe(Scores_test,ModelResultDir, 'scores_test.xlsx')
-```
-
-
-The pipeline of above process is shown as the below
-
-![Flow Chart_ADAPT](images/flow%20chart_ADAPT.png)
-
-
-## 2.2. Aim 2: To externally validate the existing model
-This aim is to validate an existing CNN externally by using a dataset with true activity labels (also walking and non-walking binary labels). **Following are the steps in main code "External_validate_model.py"**
-
-### 2.2.1. Install and import the necessary packages
-Import these packages, if not existing, install them accoding to the stpes 2.1.1.
-
-```
-import os
-import re
-import pickle
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from tensorflow.keras.models import load_model
-from keras.utils import plot_model
-import GaitRecognitionFunctions_general as GR
-import data_augmentation_general as DA
 ```
 
 ### 2.2.2. Setting folders
