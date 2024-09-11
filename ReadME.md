@@ -1,16 +1,16 @@
-This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the Norwegian University of Science and Technology, Utrecht University of Applied Sciences, and Vrije Universiteit Amsterdam.
+This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the Norwegian University of Science and Technology, Utrecht University of Applied Sciences, and Vrije Universiteit Amsterdam.  
 
 
 
 # 1. Recognize real-life gait episodes using lower back IMU for older adults
 
-We developed a convolutional neural network (CNN) based on inertial sensor data of the lower back (L5) to classify real-life activities in two categories, gait and non-gait, as presented in paper **XXX (paper link)**.
+We developed a convolutional neural network (CNN) based on inertial sensor data of the lower back (L5) to classify real-life activities in two categories, gait and non-gait, as presented in paper **[1] XXX (paper link)**.  
 
-This model is suitable for older people who walk slowly. The data for model training came from healthy and gait-impaired older adults with mean age 76.4(5.6) years old. The data for externally validation came from stroke survivors who could walk independently at a mean age of 72.4 (12.7) years. 
+This model is suitable for older people who walk slowly. The data for model training came from healthy and gait-impaired older adults with mean age 76.4(5.6) years old [2]. The data for externally validation came from stroke survivors who could walk independently at a mean age of 72.4 (12.7) years [3]. 
 
 ![Model Structure](images/Model%20Structure.png)
-**Figure1. CNN Model structure (The input IMU data can be 3-axis or 6-axis, W is the window size, 200 is 2 seconds with sampling frequency 100 Hz)**
-(Hyperparameters: Epochs = 30, Batch_size = 32, Filters = 64, Kernel_size = 3)
+**Figure1. CNN Model structure (The input IMU data can be 3-axis or 6-axis, W is the window size, 200 is 2 seconds with sampling frequency 100 Hz)**  
+(Hyperparameters: Epochs = 30, Batch_size = 32, Filters = 64, Kernel_size = 3)  
 
 ![Model performance_external dataset](/images/Model%20performance_external%20dataset.png)
 **Figure2. CNN Model performance on external dataset (stroke patients)(Note:DA, the abbreviation for data augmentation, here we use rotation 90° on xyz-axis, separately）**
@@ -18,39 +18,70 @@ This model is suitable for older people who walk slowly. The data for model trai
 
 
 ## 2. How to use the algorithm
-Before running the code, you need to install the necessary packages in python environment (versions 3.7 and above), including: os, re, pickle, math, openpyxl,h5py,numpy,pandas,scipy,matplotlib,tensorflow, keras, and sklearn.
+Before running the code, you need to install the necessary packages in python environment (versions 3.7 and above), including: os, re, pickle, math, openpyxl,h5py,numpy,pandas,scipy,matplotlib,tensorflow, keras, and sklearn.  
 
-We provide the code for the whole process, including **data preprocessing** (data reading, balancing, augmentation and segmentation), **model training (Aim 1)** (model evaluation, fit,  and overfitting prevention), and **external validation process (Aim 2)** (data reading, model prediction, model performance evaluation).
+We provide the code for the whole process, including **data preprocessing** (data reading, balancing, augmentation and segmentation), **model training (Aim 1)** (model evaluation, fit,  and overfitting prevention), and **external validation process (Aim 2)** (data reading, model prediction, model performance evaluation).  
 
-We also provide the best-performing model that we have obtained, into which you can put your sensor data to get the binary results **(Aim 3)**. 
-**Need to do: add the performance of the best model(acc,precision,sensitivity on training, testing and external validation)**
+We also provide the best-performing model that we have obtained, into which you can put your sensor data to get the binary results **(Aim 3)**.   
+**Need to do: add the performance of the best model(acc,precision,sensitivity on training, testing and external validation)**  
 
-In **"main_code.py"**, you can call the functions in **"GaitRecognitionFunctions.py"** for following different aims. 
+In **"main_code.py"**, you can call the functions in **"GaitRecognitionFunctions.py"** for following different aims.  
 
 ```
 import GaitRecognitionFunctions as GR
 ```
 
-**1) train a CNN model**
+**1) train a CNN model**  
 ```
+DataX, DataY_binary, groups, filenames, all_subjects = GR.load_matfiles(InputDataDir, aim_label, input_axis, del_labels)
+
 GR.train(repeats, DataX, DataY_binary, groups, Nfolds, augmentation_methods, input_axis, Nfolds_val, fs_trainingdata,
           window_size, overlap_rate, ModelsInfoDir, ModelsSaveDir, ModelResultDir)
 ```
 
-The `GR.train()` is responsible for data preprocessing, repeated holdouts-validation, data augmentation, model training, and model saving. It controls the model training process and saves the results through a series of input parameters.
+The `GR.train()` is responsible for data preprocessing, repeated holdouts-validation, data augmentation, model training, and model saving. It controls the model training process and saves the results through a series of input parameters.  
 
-**2) validate externally the existing model**
+`repeats`: number of training repetitions. In each traing, the dataset split and kernel weight in the model are random.   
+`DataX`: the sensor data for model training (3 channels/6 channels).    
+`DataY_binary`: the activity label corresponding to each sampling point in DataX.    
+`groups`: the subject number corresponding to each sampling point.  
+Other function input can be seen in below 4)
+
+**2) externally validate the existing model**
 ```
+DataX, DataY, groups = GR.load_txtdata(ExValDataTxtDir, input_axis)
+
 GR.validation(fs_validationdata, window_size, overlap_rate, input_axis, model_path, DataX, DataY, groups,
                augmentation_methods, plotsingal, ExValScoresDir)
 ```
-
 This `GR.validation()` is responsible for loading an existing pre-trained model, visualizes its structure, loading external validation data, and performing model using the specified settings, such as window size, overlap rate, and augmentation methods. The results and plots are stored in the directory `ExValScoresDir`.
+
+`DataX`, `DataY`,`groups` are based on external validation data.
 
 **3) predict the unknown activities**
 ```
 GR.predict_data_unsupervised(X, model_path, window_size, overlap_rate)
 ```
+
+**4) the general settings in the begining**  
+`wk_label`: the defined label of walking.  
+`aim_label`: the responding label of our targeted activity.   
+`window_size`: the winidow size of data in model training.  
+`overlap_rate`: the overlap rate in each window
+`Nfolds`: the number of partitions (folds) you want to divide the dataset into training and testing datasets by subjects for repeated holdout-validation.  
+`augmentation_methods`: choose the methods you want to use for augmentation, it can be none, one method or multiple methods. Here, we provide methods of 'noise','scaling', 'interpolation', 'rotation'.  
+`input_axis`: the input channels, can be 3 for acceleration data only, and can be 6 for aceeleration & gyroscope data.  
+`Nfolds_val`: the number of partitions (folds) you want to divide the training dataset into training and validating datasets.  
+`fs_trainingdata`: the sampling frequency of model training data. 
+`fs_validationdata`: the sampling frequency of externally validation data.   
+`InputDataDir`: the folder storing the input data for model training.   
+`ModelsInfoDir`: store subject numbers of splitted datasets and kernel weights in each training repeat.    
+`ModelsSaveDir`: store model with '.h5' in each training repeat.  
+`ModelsResultDir`: store the model performance in each training repeat. 
+`ExValDataTxtDir`: store the input data for external validation. Here, the data was stored in '.txt'.
+`ExValScoreDir`: store the model performance on external validation. 
+
+
 
 
 Explanations to the begining settings in **"main_code.py"**.
@@ -408,9 +439,11 @@ The methods and hyperparameters of them are show as below and you can modify the
 
 ## 4. References
 
-[1] Bourke AK, Ihlen EAF, Bergquist R, Wik PB, Vereijken B, Helbostad JL. A physical activity reference data-set recorded from older adults using body-worn inertial sensors and video technology—The ADAPT study data-set. Sensors. 2017;17(3):559.
+[1] Our ADAPT paper after publishing  
+[2] Bourke AK, Ihlen EAF, Bergquist R, Wik PB, Vereijken B, Helbostad JL. A physical activity reference data-set recorded from older adults using body-worn inertial sensors and video technology—The ADAPT study data-set. Sensors. 2017;17(3):559.  
+[3] Felius RAW, Geerars M, Bruijn SM, et al. Reliability of IMU-Based Gait Assessment in Clinical Stroke Rehabilitation. Sensors (Basel) 2022;22(3).  
 
-[2] Our ADAPT paper after publishing
+ 
 
 
 ## Help
