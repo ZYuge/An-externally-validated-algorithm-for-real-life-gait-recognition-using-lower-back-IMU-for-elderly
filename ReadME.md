@@ -9,8 +9,8 @@ We developed a convolutional neural network (CNN) based on inertial sensor data 
 This model is suitable for older people who walk slowly. The data for model training came from healthy and gait-impaired older adults with mean age 76.4(5.6) years old [2]. The data for externally validation came from stroke survivors who could walk independently at a mean age of 72.4 (12.7) years [3]. 
 
 
+## 1. How to use the algorithm
 
-## 2. How to use the algorithm
 Before running the code, you need to install the necessary packages in python environment (versions 3.7 and above), including: os, re, pickle, math, openpyxl,h5py,numpy,pandas,scipy,matplotlib,tensorflow, keras, and sklearn.  
 
 We provide the code for the whole process, including **data preprocessing** (data reading, balancing, augmentation and segmentation), **model training (Aim 1)** (model evaluation, fit,  and overfitting prevention), and **external validation process (Aim 2)** (data reading, model prediction, model performance evaluation).  
@@ -24,6 +24,7 @@ In **"main_code.py"**, you can call the functions in **"GaitRecognitionFunctions
 ```
 import GaitRecognitionFunctions as GR
 ```
+
 
 **1) train a CNN model**  
 ```
@@ -41,6 +42,7 @@ The `GR.train()` is responsible for data preprocessing, repeated holdouts-valida
 `groups`: the subject numbers corresponding to each sampling point.  
 Other function input can be seen in below 4)
 
+
 **2) externally validate the existing model**
 ```
 DataX, DataY, groups = GR.load_txtdata(ExValDataTxtDir, input_axis)
@@ -51,6 +53,7 @@ GR.validation(fs_validationdata, window_size, overlap_rate, input_axis, model_pa
 This `GR.validation()` is responsible for loading an existing pre-trained model, visualizes its structure, loading external validation data, and performing model using the specified settings, such as window size, overlap rate, and augmentation methods. The results and plots are stored in the directory `ExValScoresDir`.
 
 `DataX`, `DataY`,`groups` are based on external validation data. Here, since external validationi data we used is only consist of walking and standing, we haven't use `GR.dichotomy_labels()` to get DataY_binary. If your external validation data is not from binary activities, you need to add it in `GR.load_txtdata()`.  
+
 
 **3) predict the unknown activities**
 ```
@@ -77,8 +80,8 @@ GR.predict_data_unsupervised(X, model_path, window_size, overlap_rate)
 `ExValScoreDir`: store the model performance on external validation, picture of true and predicted labels on signals. 
 
 
-## 3. Format of data
-### 3.1 Input Data in  matfiles 
+## 2. Format of data
+### 2.1 Input Data in  matfiles 
 
 We used **ADAPT dataset [2] for model training**, including semi-structured supervised and free-living unsupervised situation of 20 older adults. All activities are labeled synchronously. 
 
@@ -91,6 +94,7 @@ After loading each subject's data and storing it cumulatively in the data, we ge
 - DataY includes all activity labels.  
 - DataY_binary includes walking and non-walking labels. 
 - Groups list the subject numbers corresponding to each sampling point.  
+
 
 ############################# **Need to do** ######################################## 
 ### 2.2.4. Load and segment data 
