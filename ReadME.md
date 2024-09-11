@@ -2,7 +2,7 @@ This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the
 
 
 
-# 1. Recognize real-life gait episodes using lower back IMU for older adults
+# Recognize real-life gait episodes using lower back IMU for older adults
 
 We developed a convolutional neural network (CNN) based on inertial sensor data of the lower back (L5) to classify real-life activities in two categories, gait and non-gait, as presented in paper **[1] XXX (paper link)**.  
 
