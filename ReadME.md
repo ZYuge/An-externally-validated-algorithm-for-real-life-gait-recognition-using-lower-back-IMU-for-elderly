@@ -8,8 +8,6 @@ We developed a convolutional neural network (CNN) based on inertial sensor data 
 
 This model is suitable for older people who walk slowly. The data for model training came from healthy and gait-impaired older adults with mean age 76.4(5.6) years old. The data for externally validation came from stroke survivors who could walk independently at a mean age of 72.4 (12.7) years. 
 
-We provides the codes for process 
-
 ![Model Structure](images/Model%20Structure.png)
 **Figure1. CNN Model structure (The input IMU data can be 3-axis or 6-axis, W is the window size, 200 is 2 seconds with sampling frequency 100 Hz)**
 (Hyperparameters: Epochs = 30, Batch_size = 32, Filters = 64, Kernel_size = 3)
@@ -25,7 +23,7 @@ We provide the code for the whole process, including **data preprocessing** (dat
 We also provide the best-performing model that we have obtained, into which you can put your sensor data to get the binary results. 
 **Need to do: (acc,precision,sensitivity on training, testing and external validation)**
 
-For different aims, you can choose different main Python code. 
+This code can be used in python versions 3.7 and above. For different aims, you can choose different main Python code. 
 
 **1) train a CNN model, see 2.1**
 ```
