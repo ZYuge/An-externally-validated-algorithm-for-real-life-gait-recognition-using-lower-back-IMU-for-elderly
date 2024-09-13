@@ -1,5 +1,4 @@
-This algorithm was developed by Y. Zhang on 18/03/2024 in collaboration with the Norwegian University of Science and Technology, Utrecht University of Applied Sciences, and Vrije Universiteit Amsterdam.  
-
+This algorithm was developed by Y. Zhang, Sina David, Sjoerd M. Bruijn, Michiel Punt, Jorunn L. Helbostad and Mirjam Pijnappels from Vrije Universiteit Amsterdam, the Utrecht University of Applied Sciences, and Norwegian University of Science and Technology.  
 
 
 # Recognize real-life gait episodes using lower back IMU for older adults
@@ -81,20 +80,33 @@ GR.predict_data_unsupervised(X, model_path, window_size, overlap_rate)
 
 
 ## 2. Format of data
-### 2.1 Input Data in  matfiles 
+### 2.1 Input Data in matfiles 
 
-We used **ADAPT dataset [2] for model training**, including semi-structured supervised and free-living unsupervised situation of 20 older adults. All activities are labeled synchronously. 
+We used **ADAPT dataset [2] for model training**, including semi-structured supervised and real-life unsupervised situation of 20 older adults. All activities are labeled synchronously. 
 
-in the folder `InputDataDir`, each subject's data is stored as a matrix 'signal' in a '.mat' file with subject number.
+In the folder `InputDataDir`, each subject's data is stored as a '.mat' file with subject number. The sensor data is as a matrix 'signal' in the mat file, where responding columns are 3-axis acceleration, 3-axis gyroscope, 3-axis magnetometer data, activity labels and time. XYZ axes respond to vertical (up, +), medial-lateral (right +), and anteroposterior (anter +), respectively. 
 
-The responding columns in the matrix are 3-axis acceleration, 3-axis gyroscope, 3-axis magnetometer data, activity labels and time. Columns XYZ axes respond to vertical (up, +), medial-lateral (right +), and anteroposterior (anter +), respectively. 
-
-After loading each subject's data and storing it cumulatively in the data, we get DataX, DataY, DataY_binary and groups.
+After loading each subject's data and appending it cumulatively, we get DataX, DataY, DataY_binary and groups.
 - DataX has 6 axes, i.e., 3-axis acceleration, 3-axis gyroscope.  
 - DataY includes all activity labels.  
-- DataY_binary includes walking and non-walking labels. 
-- Groups list the subject numbers corresponding to each sampling point.  
+- DataY_binary includes labels of walking(=1) and non-walking(=0). 
+- Groups list the subject numbers corresponding to each sampling point.
+   
+### 2.2 Input Data in .txt files 
 
+The **external validation data** we used was saved in ".txt" files in the folder `ExValDataTxtDir`.
+
+**We put all the IMU signals of walking and non-walking into separate ".txt" files under the input folder.** Also, the signals can be 6 axes [3-axis acceleration, 3-axis gyroscope] or only 3 axes [3-axis acceleration] (random directions). All subjects's signals are spliced vertically. The responding activity labels and subjects' number are spliced vertically and in different files.
+
+Anyway, there are 5 '.txt' files under the input folder. They are 
+- signals_wk.txt
+- signals_nonwk.txt
+- y_wk.txt
+- y_nonwk.txt
+- groups_wk.txt
+- group_sta.txt
+- filenames_wk      # filenames of each subject's IMU data before combined into signals_wk.txt
+- filenames_nonwk
 
 ############################# **Need to do** ######################################## 
 ### 2.2.4. Load and segment data 
