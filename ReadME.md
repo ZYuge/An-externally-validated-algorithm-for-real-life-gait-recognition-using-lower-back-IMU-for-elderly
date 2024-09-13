@@ -69,19 +69,19 @@ GR.predict_data_unsupervised(X, model_path, window_size, overlap_rate)
 `aim_label`: the responding label of our targeted activity.   
 `del_label`: the activity labels can be deleted to reduce computation, such as 'undefined' and 'none'.  
 `window_size`: the winidow size of data in model training.  
-`overlap_rate`: the overlap rate in each window
+`overlap_rate`: the overlap rate in each window.  
 `Nfolds`: the number of partitions (folds) you want to divide the dataset into training and testing datasets by subjects for repeated holdout-validation.  
-`augmentation_methods`: choose the methods you want to use for augmentation, it can be none, one method or multiple methods. Here, we provide methods of 'noise','scaling', 'interpolation', 'rotation'.  
-`input_axis`: the input channels, can be 3 for acceleration data only, and can be 6 for aceeleration & gyroscope data.  
+`augmentation_methods`: choose the methods you want to use for augmentation, it can be none, one method or multiple methods. Here, we provide methods of 'noise','scaling', 'interpolation', 'rotation'.   
+`input_axis`: the input channels, can be 3 for acceleration data only, and can be 6 for aceeleration & gyroscope data.   
 `Nfolds_val`: the number of partitions (folds) you want to divide the training dataset into training and validating datasets.  
-`fs_trainingdata`: the sampling frequency of model training data. 
+`fs_trainingdata`: the sampling frequency of model training data.  
 `fs_validationdata`: the sampling frequency of externally validation data.   
 `InputDataDir`: the folder storing the input data for model training.   
 `ModelsInfoDir`: store subject numbers of splitted datasets and kernel weights in each training repeat.    
 `ModelsSaveDir`: store model with '.h5' in each training repeat.  
-`ModelsResultDir`: store the model performance in each training repeat. 
-`ExValDataTxtDir`: store the input data for external validation. Here, the data was stored in '.txt'.
-`ExValScoreDir`: store the model performance on external validation, picture of true and predicted labels on signals. 
+`ModelsResultDir`: store the model performance in each training repeat.  
+`ExValDataTxtDir`: store the input data for external validation. Here, the data was stored in '.txt'.   
+`ExValScoreDir`: store the model performance on external validation, picture of true and predicted labels on signals.   
 
 
 ## 2. Format of data
