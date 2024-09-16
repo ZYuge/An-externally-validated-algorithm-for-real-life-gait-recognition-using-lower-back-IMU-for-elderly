@@ -6,7 +6,6 @@ Raw data (mat files): there are 17 labeled activities --> 0=none, 1=walking, 2=w
 Aim_label: 1, walking
 0-10 columns in each subject's signal: 0-2 ACCxyz;3-5 GYRxyz; 6-8 MAGxyz; 9 activity_Labels; 10, Time
 Aim for this code: identify gait episodes and non-gait episodes with high performance
-
 """
 
 import os
@@ -627,26 +626,40 @@ def validation(fs, window_size, overlap_rate, input_axis, model_path, DataX, Dat
     # segment data into windows
     X_win, y_win, groups_win = segment_signal(DataX_new, DataY_new, groups_new, window_size, overlap_rate)
 
-    # load existing models
-    cnn_model = load_model(model_path)
+    # load existing models from the folders and predict y labels in a loop
+    scores_all = []
+    for filename in os.listdir(model_path):
+        if filename.endswith('.h5'):
+            filename_without_externsion = os.path.splitext(filename)[0]
+            parts = filename_without_externsion.split('_')
+            model_number = parts[-1]
 
-    # predict y
-    y_predict = cnn_model.predict(X_win).round()
-    # remove the overlapping, although it does not influence the results
-    overlap_samples = int(overlap_rate * window_size)
-    X_rm_repeat = X_win[:, :overlap_samples, :]
-    X = X_rm_repeat.reshape(-1, X_win.shape[-1])
-    winsize_new = int(window_size-overlap_samples)
-    y_predict_final = np.repeat(y_predict, winsize_new, axis=0)
-    y_true_final = np.repeat(y_win, winsize_new, axis=0)
-    groups_final = np.repeat(groups_win, winsize_new, axis=0)
-    score = model_performance(y_true_final, y_predict_final)
-    # scores = pd.DataFrame(score, columns=["Accuracy","Precision","Sensitivity","F1-score","Specificity","loop_time"])
-    # scores.to_excel(f"{ExValScoresDir}/scores_external_validation.xlsx",index=False)
-    print('CNN model results of external dataset.\n', score)
+            file_path = os.path.join(model_path,filename)
+            cnn_model = load_model(file_path)
+            y_predict = cnn_model.predict(X_win).round()
+
+            # remove the overlapping, although it does not influence the results
+            overlap_samples = int(overlap_rate * window_size)
+            X_rm_repeat = X_win[:, :overlap_samples, :]
+            X = X_rm_repeat.reshape(-1, X_win.shape[-1])
+            winsize_new = int(window_size-overlap_samples)
+            y_predict_final = np.repeat(y_predict, winsize_new, axis=0)
+            y_true_final = np.repeat(y_win, winsize_new, axis=0)
+            groups_final = np.repeat(groups_win, winsize_new, axis=0)
+            score = model_performance(y_true_final, y_predict_final)
+            score = score.assign(model_number=model_number)
+            scores_all.append(score)
+            print('CNN model results of external dataset.\n', score)
+
+    flattened_scores = [np.ravel(arr) for arr in scores_all]
+    scores_export = pd.DataFrame(flattened_scores,
+                          columns=['Accuracy', 'Precision', 'Sensitivity', 'F1', 'Specificity', 'tn', 'fp', 'fn', 'tp',
+                                   'model_number'])
+    print('CNN model results of external dataset.\n', scores_export)
+    scores_export.to_excel(f"{ExValScoresDir}/scores_external_validation.xlsx", index=False)
 
     if plotsingal:
-        plot_signal(X, y_predict_final, y_true_final, fs, ExValScoresDir,'External validation dataset')
+        plot_signal(X, y_predict_final, y_true_final, fs, ExValScoresDir,f'External validation dataset for model_{model_number}')
 
     return score, y_predict_final, y_true_final
 

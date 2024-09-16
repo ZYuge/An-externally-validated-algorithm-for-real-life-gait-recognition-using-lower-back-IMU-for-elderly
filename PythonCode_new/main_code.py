@@ -50,30 +50,25 @@ GR.train(repeats, DataX, DataY_binary, groups, Nfolds, augmentation_methods, inp
           window_size, overlap_rate, ModelsInfoDir, ModelsSaveDir, ModelResultDir)
 
 # # 2) AIM 2: validate the existing models
+# put the '.h5' model into a folder, here we use ModelsSaveDir
 plotsingal = True
-model_path = f'{ModelsSaveDir}/CNNmodel_1.h5'  # the path of existing model
-cnn_model = load_model(model_path)             # plot the model structure
-plot_model(cnn_model, to_file=f'{ExValScoresDir}/Model Structure_channels{input_axis}.png', show_shapes=True, show_layer_names=True)
-
 DataX, DataY, groups = GR.load_txtdata(ExValDataTxtDir, input_axis)
-
+model_path = ModelsSaveDir
 GR.validation(fs_validationdata, window_size, overlap_rate, input_axis, model_path, DataX, DataY, groups,
                augmentation_methods, plotsingal, ExValScoresDir)
-#
-# # 3) AIM 3: predict unsupervised data
-# # csv_path = '/Users/yugezi/Desktop/1.1_ProjectVIBE_MP/3_ADAPT/8_UnlabelMcRobertMat File/PID927_accData.csv'
-# # X = GR.load_csvfile(csv_path)
-#
-# mat_path = '/Users/yugezi/Desktop/1.1_ProjectVIBE_MP/3_ADAPT/8_UnlabelMcRobertMat File/PID927.mat'
-# item = spio.loadmat(mat_path)
-# X = item['ACC'][:,1:4]
-#
-# model_path = f'{ModelsSaveDir}/CNNmodel_3axis.h5'
-# # cnn_model = load_model(model_path)             # plot the model structure
-#
-# overlap_rate = 0.995
-# window_size = 200
-# predict_data_unsupervised(X, model_path, window_size, overlap_rate)
-#
-#
-# # to do: get the true labels from that csv files
+
+# 3) AIM 3: predict unsupervised data
+# csv_path = '/Users/yugezi/Desktop/1.1_ProjectVIBE_MP/3_ADAPT/8_UnlabelMcRobertMat File/PID927_accData.csv'
+# X = GR.load_csvfile(csv_path)
+
+mat_path = '/Users/yugezi/Desktop/1.1_ProjectVIBE_MP/3_ADAPT/8_UnlabelMcRobertMat File/PID927.mat'
+item = spio.loadmat(mat_path)
+X = item['ACC'][:,1:4]
+
+model_path = f'{ModelsSaveDir}/CNNmodel_3axis.h5'
+# cnn_model = load_model(model_path)             # plot the model structure
+
+overlap_rate = 0.995
+window_size = 200
+GR.predict_data_unsupervised(X, model_path, window_size, overlap_rate)
+
