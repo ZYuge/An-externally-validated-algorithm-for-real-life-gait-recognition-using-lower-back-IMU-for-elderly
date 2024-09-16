@@ -89,6 +89,8 @@ GR.predict_data_unsupervised(X, model_path, window_size, overlap_rate)
 
 We used **ADAPT dataset [2] for model training**, including semi-structured supervised and real-life unsupervised situation of 20 older adults. All activities are labeled synchronously. 
 
+**The example data is stored in the dir './github/Example data/for model training_Aim1'. The path of it can be set as `InputDataDir` in the code.**
+
 In the folder `InputDataDir`, each subject's data is stored as a '.mat' file with subject number. The sensor data is as a matrix 'signal' in the mat file, where responding columns are 3-axis acceleration, 3-axis gyroscope, 3-axis magnetometer data, activity labels and time. XYZ axes respond to vertical (up, +), medial-lateral (right +), and anteroposterior (anter +), respectively. 
 
 After loading each subject's data and appending it cumulatively, we get DataX, DataY, DataY_binary and groups.The function we use is `GR.load_matfiles()`.
@@ -96,7 +98,13 @@ After loading each subject's data and appending it cumulatively, we get DataX, D
 - DataY includes all activity labels.  
 - DataY_binary includes labels of walking(=1) and non-walking(=0). 
 - Groups list the subject numbers corresponding to each sampling point.
-   
+
+The activity labels of **ADAPT dataset** represent:
+0=none, 1=walking, 2=walking with transition, 3=shuffling,  
+4=stairs(ascending), 5=stairs(descending), 6=standing, 
+7=sitting, 8=lying, 9=transition, 10=leaning, 11=undefined,  
+12=jumping, 13=dynamic, 14=static, 15=shake, 16=picking, 17=kneeling.
+
 ### 2.2 Input Data in .txt files 
 
 The original data is collected in '.txt' files of each individual for walking and non-walking, with 6 columns in each file for acceleration and gyroscope data. And the activity is also listed in the filenames. After orgnizing, all subjects's signals are spliced vertically, so the same to y labels and groups.
