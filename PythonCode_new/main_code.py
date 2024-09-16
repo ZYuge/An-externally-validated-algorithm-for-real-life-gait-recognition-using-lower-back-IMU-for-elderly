@@ -24,12 +24,14 @@ augmentation_methods = ['rotation']  # can for aim 1 or aim 2
 fs_trainingdata = 100    # raw sampling frequency for data of training models
 fs_validationdata = 104  # raw sampling frequency of external data used for validating the existing models
 
-InputDataDir = '/Users/yugezi/Desktop/1.1_ProjectVIBE_MP/3_ADAPT/3_Data/1_uSenseL5_data/act17_mat/'
-ModelsSaveDir = "/Users/yugezi/PycharmProjects/ADAPT-project/Github_OpenSource/CNN_models_save"
-ModelsInfoDir = "/Users/yugezi/PycharmProjects/ADAPT-project/Github_OpenSource/CNN_models_info"      # for AIM 1
-ModelResultDir = "/Users/yugezi/PycharmProjects/ADAPT-project/Github_OpenSource/CNN_models_results"  # for AIM 1
-ExValDataTxtDir = "/Users/yugezi/Desktop/1.1_ProjectVIBE_MP/3_ADAPT/5_MichielPunt_ExternalValitaionData/UsedInModel_txtFiles" # for AIM 2
-ExValScoresDir = "/Users/yugezi/PycharmProjects/ADAPT-project/Github_OpenSource/CNN_models_results"
+InputDataDir = './Example Data/for model training_Aim1'
+ModelsSaveDir = "./CNN_models_save"      # from AIM 1 / self defined
+ModelsInfoDir = "./CNN_models_info"      # from AIM 1
+ModelResultDir = "./CNN_models_results_from AIM1"  
+ExValDataTxtDir = "./Example Data/for external validation_Aim2" # for AIM 2
+ExValScoresDir = "./CNN_models_results_from AIM2" # for AIM 2
+Unsupervised_data_path = './Example Data/for unsupervised prediction_Aim3/PID927.mat'  
+BestModelDir = "./best_cnn_models" # for AIM 3
 
 if not os.path.exists(ModelsSaveDir):
     os.makedirs(ModelsSaveDir)
@@ -58,14 +60,10 @@ GR.validation(fs_validationdata, window_size, overlap_rate, input_axis, model_pa
                augmentation_methods, plotsingal, ExValScoresDir)
 
 # 3) AIM 3: predict unsupervised data
-# csv_path = '/Users/yugezi/Desktop/1.1_ProjectVIBE_MP/3_ADAPT/8_UnlabelMcRobertMat File/PID927_accData.csv'
-# X = GR.load_csvfile(csv_path)
-
-mat_path = '/Users/yugezi/Desktop/1.1_ProjectVIBE_MP/3_ADAPT/8_UnlabelMcRobertMat File/PID927.mat'
-item = spio.loadmat(mat_path)
+item = spio.loadmat(Unsupervised_data_path)
 X = item['ACC'][:,1:4]
 
-model_path = f'{ModelsSaveDir}/CNNmodel_3axis.h5'
+model_path = f'{BestModelDir}/CNNmodel_3axis.h5'
 # cnn_model = load_model(model_path)             # plot the model structure
 
 overlap_rate = 0.995
