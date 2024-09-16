@@ -85,7 +85,7 @@ GR.predict_data_unsupervised(X, model_path, window_size, overlap_rate)
 
 
 ## 2. Format of data
-The example data can be downloaded by using the link https://surfdrive.surf.nl/files/index.php/s/CHDNOoUJWocUfHX.
+The example data can be downloaded by using the link [https://surfdrive.surf.nl/files/index.php/s/CHDNOoUJWocUfHX](https://surfdrive.surf.nl/files/index.php/s/R9AkNL0V8MLgmiB).
 
 ### 2.1 Input Data in matfiles 
 
