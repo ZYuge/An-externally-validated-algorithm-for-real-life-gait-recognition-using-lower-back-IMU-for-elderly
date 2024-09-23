@@ -85,7 +85,7 @@ GR.predict_data_unsupervised(X, model_path, window_size, overlap_rate)
 
 
 ## 2. Format of data
-The example data can be downloaded by using the link https://surfdrive.surf.nl/files/index.php/s/R9AkNL0V8MLgmiB.
+The example data can be downloaded by using the link UPLOAD EXAMPLE FILE.
 ### 2.1 Input Data in matfiles 
 
 We used **ADAPT dataset [2] for model training**, including semi-structured supervised and real-life unsupervised situation of 20 older adults. All activities are labeled synchronously. 
