@@ -3,7 +3,7 @@ This algorithm was developed by Y. Zhang, Sina David, Sjoerd M. Bruijn, Michiel 
 
 # Recognize real-life gait episodes using lower back IMU for older adults
 
-We developed a convolutional neural network (CNN) based on inertial sensor data of the lower back (L5) to classify real-life activities in two categories, gait and non-gait, as presented in paper **[1] [paper link](https://link.springer.com/article/10.1007/s11517-025-03466-z)**.  
+We developed a convolutional neural network (CNN) based on inertial sensor data of the lower back (L5) to classify real-life activities in two categories, gait and non-gait, as presented in paper **[1] [link](https://link.springer.com/article/10.1007/s11517-025-03466-z)**.  
 
 This model is suitable for older people who walk slowly. The data for model training came from healthy and gait-impaired older adults with mean age 76.4(5.6) years old [2]. The data for externally validation came from stroke survivors who could walk independently at a mean age of 72.4 (12.7) years [3]. 
 
@@ -15,10 +15,8 @@ Before running the code, you need to install the necessary packages in python en
 We provide the code for the whole process, including **data preprocessing** (data reading, balancing, augmentation and segmentation), **model training (Aim 1)** (model evaluation, fit,  and overfitting prevention), and **external validation process (Aim 2)** (data reading, model prediction, model performance evaluation).  
 
 We also provide the best-performing model that we have obtained, into which you can put your sensor data to get the binary results **(Aim 3)**.   
-**Need to do: add the performance of the best model(acc,precision,sensitivity on training, testing and external validation)**  
 
 In **"main_code.py"**, you can call the functions in **"GaitRecognitionFunctions.py"** for following different aims.  
-**Need to do: add a picture in the end, introducing functions contained in GR with the process direction**  
 
 ```
 import GaitRecognitionFunctions as GR
