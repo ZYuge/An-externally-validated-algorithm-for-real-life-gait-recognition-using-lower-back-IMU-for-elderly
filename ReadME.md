@@ -150,7 +150,7 @@ GR.validation(fs_validationdata, window_size, overlap_rate, input_axis, model_pa
 
 ## 4. References
 
-[1] Our ADAPT paper after publishing  
+[1] [Our ADAPT paper after publishing](https://link.springer.com/article/10.1007/s11517-025-03466-z)  
 [2] Bourke AK, Ihlen EAF, Bergquist R, Wik PB, Vereijken B, Helbostad JL. A physical activity reference data-set recorded from older adults using body-worn inertial sensors and video technology—The ADAPT study data-set. Sensors. 2017;17(3):559.  
 [3] Felius RAW, Geerars M, Bruijn SM, et al. Reliability of IMU-Based Gait Assessment in Clinical Stroke Rehabilitation. Sensors (Basel) 2022;22(3).  
 
