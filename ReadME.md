@@ -167,4 +167,4 @@ GR.validation(fs_validationdata, window_size, overlap_rate, input_axis, model_pa
 
 ## Help
 
-For questions about the algorithm and the implementations please contact: [y6.zhang@vu.nl](mailto:y6.zhang@vu.nl)
+For questions about the algorithm and the implementations please contact: [yugezhang0215@gmail.com](mailto:yugezhang0215@gmail.com)
