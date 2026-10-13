@@ -93,12 +93,11 @@ GR.predict_data_unsupervised(X, model_path, window_size, overlap_rate)
 
 
 ## 2. Format of data
-The example data can be downloaded by using the link [UPLOAD EXAMPLE FILE](https://drive.google.com/drive/folders/1IzSRh8Th3zzxsP3cEAWY3xVwbSjO4WhD?usp=sharing).
+The example data can be downloaded by using the link [UPLOAD EXAMPLE FILE](https://drive.google.com/drive/folders/1IzSRh8Th3zzxsP3cEAWY3xVwbSjO4WhD?usp=sharing), containing synthetic data based on true data to help users familiarize themselves with the data format.
+
 ### 2.1 Input Data in matfiles 
 
-We used **ADAPT dataset [2] for model training**, including semi-structured supervised and real-life unsupervised situation of 20 older adults. All activities are labeled synchronously. 
-
-**The example data is stored in the dir './github/Example data/for model training_Aim1'. The path of it can be set as `InputDataDir` in the code.**
+We used **ADAPT dataset [2] for model training**, including semi-structured supervised and real-life unsupervised situation of 20 older adults. All activities are labeled synchronously. (If you want to request ADAPT dataset, please contact their team[2].)
 
 In the folder `InputDataDir`, each subject's data is stored as a '.mat' file with subject number. The sensor data is as a matrix 'signal' in the mat file, where responding columns are 3-axis acceleration, 3-axis gyroscope, 3-axis magnetometer data, activity labels and time. XYZ axes respond to vertical (up, +), medial-lateral (right +), and anteroposterior (anter +), respectively. 
 
